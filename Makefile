@@ -16,6 +16,7 @@ html:
 		sed "s/__NAME__/$$screen/; s/__IMAGES__/$$images/" \
 		> $$screen/index.html; \
 		cp template/manifest.mf $$screen/manifest.mf; \
+		sed "s/^#Version.*/#Version `date "+%y.%m%d.%H%M"`/" $$screen/manifest.mf | sponge $$screen/manifest.mf; \
 		echo $$imageFiles | tr ' ' '\n' >> $$screen/manifest.mf; \
 	done;
 
