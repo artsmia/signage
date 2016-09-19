@@ -19,15 +19,16 @@ var images = imageString.split(" ").map(function(img) {
 var image = document.createElement('img')
 image.src = './'+images[0]
 
-var text = document.createElement('div')
-text.classList.add('caption')
-text.innerHTML = caption
-
-var gradient = document.createElement('div')
-gradient.classList.add('gradient-overlay')
-
 document.body.appendChild(image)
+
 if(caption !== "") {
+  var text = document.createElement('div')
+  text.classList.add('caption')
+  text.innerHTML = caption
+
+  var gradient = document.createElement('div')
+  gradient.classList.add('gradient-overlay')
+
   document.body.appendChild(text)
   document.body.appendChild(gradient)
 }
