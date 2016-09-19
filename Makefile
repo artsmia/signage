@@ -12,8 +12,9 @@ html:
 	ls | grep UL- | while read screen; do \
 		imageFiles=$$(gls -1v $$screen/ | grep '.jpg$$'); \
 		images=$$(echo $$imageFiles | tr '\n' ' ' | sed 's/\s+$$//'); \
+		[[ -f $$screen/index.md ]] && caption=$$(remark --use remark-html $$screen/index.md | tr -s '\n' ' '); \
+		gsed "s/__NAME__/$$screen/; s/__IMAGES__/$$images/; s|__CAPTION__|$$caption|" \
 		< template/index.html \
-		sed "s/__NAME__/$$screen/; s/__IMAGES__/$$images/" \
 		> $$screen/index.html; \
 		cp template/manifest.mf $$screen/manifest.mf; \
 		sed "s/^#Version.*/#Version `date "+%y.%m%d.%H%M"`/" $$screen/manifest.mf | sponge $$screen/manifest.mf; \

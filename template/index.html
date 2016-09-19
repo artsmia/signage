@@ -1,13 +1,15 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <meta charset="utf-8">
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="http://mia-grotesk.s3.amazonaws.com/index.css" type="text/css" media="screen" />
 </head>
 <body style="background-color:black;color:white;margin:0px;width:1920px; height: 1080px;">
 
 <script>
 var name = "__NAME"
 var imageString = "__IMAGES__"
+var caption = "__CAPTION__"
 
 var images = imageString.split(" ").map(function(img) {
   return img
@@ -17,7 +19,11 @@ var images = imageString.split(" ").map(function(img) {
 var image = document.createElement('img')
 image.src = './'+images[0]
 
+var text = document.createElement('div')
+text.innerHTML = caption
+
 document.body.appendChild(image)
+if(caption !== "") document.body.appendChild(text)
 
 var transition = setInterval(function() {
   var relativeImageName = image.src.match(/[^\/]+\.jpg$/)[0]
@@ -27,6 +33,26 @@ var transition = setInterval(function() {
   image.src = nextImage
 }, 11000)
 </script>
+
+<style type="text/css">
+div {
+  font-family: MiaGrotesk-Light;
+  position: absolute;
+  bottom: 4em;
+  right: 4em;
+  max-width: 34%;
+  line-height: 3.7em;
+}
+
+div > * {
+  font-size: 45px;
+  margin: 0
+}
+
+div h1, div strong {
+  font-family: MiaGrotesk-Bold;
+}
+</style>
 </body>
 </html>
 
