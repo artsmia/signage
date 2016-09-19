@@ -20,10 +20,17 @@ var image = document.createElement('img')
 image.src = './'+images[0]
 
 var text = document.createElement('div')
+text.classList.add('caption')
 text.innerHTML = caption
 
+var gradient = document.createElement('div')
+gradient.classList.add('gradient-overlay')
+
 document.body.appendChild(image)
-if(caption !== "") document.body.appendChild(text)
+if(caption !== "") {
+  document.body.appendChild(text)
+  document.body.appendChild(gradient)
+}
 
 var transition = setInterval(function() {
   var relativeImageName = image.src.match(/[^\/]+\.jpg$/)[0]
@@ -35,7 +42,24 @@ var transition = setInterval(function() {
 </script>
 
 <style type="text/css">
-div {
+img {
+  position: absolute;
+  top: 0;
+}
+
+.gradient-overlay {
+  position: absolute;
+  z-index: 1;
+  width: 1920px;
+  height: 1080px;
+  background: radial-gradient(at bottom right,
+    rgba(0, 0, 0, 0.5),
+    rgba(0, 0, 0, 0.25),
+    rgba(0, 0, 0, 0.05),
+    rgba(0, 0, 0, 0));
+}
+
+.caption {
   font-family: MiaGrotesk-Light;
   position: absolute;
   bottom: 4em;
@@ -44,12 +68,15 @@ div {
   line-height: 3.7em;
 }
 
-div > * {
+.caption {
+  z-index: 2;
+}
+.caption > * {
   font-size: 45px;
   margin: 0
 }
 
-div h1, div strong {
+.caption h1, .caption strong {
   font-family: MiaGrotesk-Bold;
 }
 </style>
