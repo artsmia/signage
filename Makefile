@@ -46,3 +46,10 @@ check-exhibition-dates:
 		  echo exhibition is over! -- $$id -- $$file; \
 		fi; \
 	done;
+
+install:
+	which gls >/dev/null || echo 'brew install coreutils'
+	which sponge >/dev/null || echo 'brew install moreutils'
+	which jq >/dev/null || echo 'brew install jq'
+	npm --version >/dev/null || echo 'must install npm!'
+	which remark >/dev/null || echo 'npm install --global remark remark-html for markdown processing'
