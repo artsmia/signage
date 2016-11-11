@@ -9,7 +9,7 @@ syncThumbdrives:
 	done
 
 html:
-	ls | grep UL- | while read screen; do \
+	ls | grep 'UL-\|LOWER-LOBBY' | while read screen; do \
 		imageFiles=$$(gls -1v $$screen/ | grep '.jpg$$'); \
 		images=$$(echo $$imageFiles | tr '\n' ' ' | sed 's/\s+$$//'); \
 		[[ -f $$screen/index.md ]] && caption=$$(remark --use remark-html $$screen/index.md | tr -s '\n' ' '); \
@@ -53,3 +53,6 @@ install:
 	which jq >/dev/null || echo 'brew install jq'
 	npm --version >/dev/null || echo 'must install npm!'
 	which remark >/dev/null || echo 'npm install --global remark remark-html for markdown processing'
+
+watch:
+	rewatch template/index.html Makefile -c "make html"
