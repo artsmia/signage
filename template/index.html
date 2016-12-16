@@ -9,7 +9,7 @@
 <script>
 var name = "__NAME"
 var imageString = "__IMAGES__"
-var caption = "__CAPTION__"
+var caption = `__CAPTION__`
 
 var images = imageString.split(" ").map(function(img) {
   return img
@@ -24,7 +24,14 @@ document.body.appendChild(image)
 if(caption !== "") {
   var text = document.createElement('div')
   text.classList.add('caption')
-  text.innerHTML = caption
+  var captionJson;
+  try {
+    captionJson = JSON.parse(caption)
+    fancyCaption()
+  } catch(test) {
+    captionJson = false
+    text.innerHTML = caption
+  }
 
   var gradient = document.createElement('div')
   gradient.classList.add('gradient-overlay')
@@ -39,7 +46,14 @@ var transition = setInterval(function() {
   var nextIndex = (currentIndex+1) % (images.length-1)
   var nextImage = './'+images[nextIndex]
   image.src = nextImage
+  image.onload = fancyCaption
 }, 11000)
+
+function fancyCaption() {
+  var relativeImageName = image.src.match(/[^\/]+\.jpg$/)[0]
+  var info = captionJson[relativeImageName]
+  text.innerHTML = `<h1>${info.title}</h1> <h2>${info.location}</h2>`
+}
 </script>
 
 <style type="text/css">

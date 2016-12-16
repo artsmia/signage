@@ -13,7 +13,14 @@ html:
 		imageFiles=$$(gls -1v $$screen/ | grep '.jpg$$'); \
 		images=$$(echo $$imageFiles | tr '\n' ' ' | sed 's/\s+$$//'); \
 		[[ -f $$screen/index.md ]] && caption=$$(remark --use remark-html $$screen/index.md | tr -s '\n' ' '); \
-		gsed "s/__NAME__/$$screen/; s/__IMAGES__/$$images/; s|__CAPTION__|$$caption|" \
+		if ls $$screen/*.jpg | grep '_wp-' > /dev/null; then \
+			caption=$$(cd $$screen; ls *.jpg | while read file; do \
+				wpId=$$(echo $$file | sed 's/.*wp-\(.*\).jpg/\1/'); \
+				curl --silent "http://new.artsmia.org/wp-json/wp/v2/exhibition/$$wpId?_embed" \
+				| jq --arg file "$$file" '{($$file): {title: .title.rendered, location: .acf.location}}'; \
+			done | jq -c -s 'add'); \
+		fi; \
+		gsed "s/__NAME__/$$screen/; s/__IMAGES__/$$images/; s#__CAPTION__#$$caption#" \
 		< template/index.html \
 		> $$screen/index.html; \
 		cp template/manifest.mf $$screen/manifest.mf; \
