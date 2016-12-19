@@ -24,7 +24,7 @@ html:
 			caption=$$(cd $$screen; ls *.jpg | while read file; do \
 				objectId=$$(echo $$file | sed 's/.*:id-\(.*\).jpg/\1/'); \
 				curl --silent "http://search.artsmia.org/id/$$objectId" \
-				| jq --arg file "$$file" '{($$file): {title: .title, location: (.room | sub("G"; "Gallery "))}}'; \
+				| jq --arg file "$$file" '{($$file): {id: .id, title: .title, location: (.room | sub("G"; "Gallery ")), width: .image_width, height: .image_height}}'; \
 			done | jq -c -s 'add'); \
 		fi; \
 		gsed "s/__NAME__/$$screen/; s/__IMAGES__/$$images/; s#__CAPTION__#$$caption#" \

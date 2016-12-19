@@ -33,6 +33,12 @@ if(caption !== "") {
     text.innerHTML = caption
   }
 
+  // temporarily, don't caption artworks
+  // (because the images have the gallery hardcoded
+  // and re-making them all is hard. Continue to use the
+  // location info to skip "Not on View" objects)
+  if(captionJson && captionJson[0].id) return
+
   var gradient = document.createElement('div')
   gradient.classList.add('gradient-overlay')
 
@@ -60,6 +66,7 @@ var transition = setInterval(function() {
 function fancyCaption() {
   var relativeImageName = image.src.match(/[^\/]+\.jpg$/)[0]
   var info = captionJson[relativeImageName]
+  if(info.id) return
   text.innerHTML = `<h1>${info.title}</h1> <h2>${info.location}</h2>`
 }
 </script>
