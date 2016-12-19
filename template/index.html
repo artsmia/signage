@@ -44,8 +44,16 @@ var transition = setInterval(function() {
   var relativeImageName = image.src.match(/[^\/]+\.jpg$/)[0]
   var currentIndex = images.indexOf(relativeImageName)
   var nextIndex = (currentIndex+1) % (images.length-1)
-  var nextImage = './'+images[nextIndex]
-  image.src = nextImage
+
+  var info = captionJson[images[nextIndex]]
+  while(info.location == 'Not on View') {
+    images.splice(nextIndex, 1)
+    console.info('id not on view, skipping', info)
+    info = captionJson[images[nextIndex]]
+  }
+
+  var nextImage = images[nextIndex]
+  image.src = './'+nextImage
   image.onload = fancyCaption
 }, 11000)
 
