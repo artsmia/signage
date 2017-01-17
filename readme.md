@@ -15,7 +15,5 @@ a webserver. Down the road we'll enable fancy live updates.
 
 - [ ] don't hardcode `UL-` for building screens
 - [ ] don't hardcode deploy location
-- [ ] per-slide captioning (captions only work per-screen right now)
-- [ ] connect to `api.artsmia.org` to get object gallery locations
 - [ ] don't be mac specific (remove `gls` dependency?)
 - [ ] convert single slides into their own html pages?

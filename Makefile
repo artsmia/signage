@@ -1,3 +1,5 @@
+SHELL := bash
+
 default: html deploy
 
 syncThumbdrives:
@@ -8,12 +10,27 @@ syncThumbdrives:
 		fi; \
 	done
 
+screens = $$(ls | grep 'UL-\ |LOWER-LOBBY')
 html:
-	ls | grep 'UL-\|LOWER-LOBBY' | while read screen; do \
-		imageFiles=$$(gls -1v $$screen/ | grep '.jpg$$'); \
+	echo $(screens) | while read screen; do \
+		imageFiles=$$(ls -1v $$screen/ | grep '.jpg$$'); \
 		images=$$(echo $$imageFiles | tr '\n' ' ' | sed 's/\s+$$//'); \
 		[[ -f $$screen/index.md ]] && caption=$$(remark --use remark-html $$screen/index.md | tr -s '\n' ' '); \
-		gsed "s/__NAME__/$$screen/; s/__IMAGES__/$$images/; s|__CAPTION__|$$caption|" \
+		if ls $$screen/*.jpg | grep '_wp-' > /dev/null; then \
+			caption=$$(cd $$screen; ls *.jpg | while read file; do \
+				wpId=$$(echo $$file | sed 's/.*wp-\(.*\).jpg/\1/'); \
+				curl --silent "http://new.artsmia.org/wp-json/wp/v2/exhibition/$$wpId?_embed" \
+				| jq --arg file "$$file" '{($$file): {title: .title.rendered, location: .acf.location}}'; \
+			done | jq -c -s 'add'); \
+		fi; \
+		if ls $$screen/*.jpg | grep ':id-' > /dev/null; then \
+			caption=$$(cd $$screen; ls *.jpg | while read file; do \
+				objectId=$$(echo $$file | sed 's/.*:id-\(.*\).jpg/\1/'); \
+				curl --silent "http://search.artsmia.org/id/$$objectId" \
+				| jq --arg file "$$file" '{($$file): {id: .id, title: .title, location: (.room | sub("G"; "Gallery ")), width: .image_width, height: .image_height}}'; \
+			done | jq -c -s 'add'); \
+		fi; \
+		sed "s/__NAME__/$$screen/; s/__IMAGES__/$$images/; s#__CAPTION__#$$caption#" \
 		< template/index.html \
 		> $$screen/index.html; \
 		cp template/manifest.mf $$screen/manifest.mf; \
@@ -48,7 +65,6 @@ check-exhibition-dates:
 	done;
 
 install:
-	which gls >/dev/null || echo 'brew install coreutils'
 	which sponge >/dev/null || echo 'brew install moreutils'
 	which jq >/dev/null || echo 'brew install jq'
 	npm --version >/dev/null || echo 'must install npm!'
