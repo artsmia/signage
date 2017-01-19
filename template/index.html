@@ -33,17 +33,18 @@ if(caption !== "") {
     text.innerHTML = caption
   }
 
-  // temporarily, don't caption artworks
-  // (because the images have the gallery hardcoded
-  // and re-making them all is hard. Continue to use the
-  // location info to skip "Not on View" objects)
-  if(captionJson && captionJson[0].id) return
+  if(captionJson && Object.values(captionJson)[0].id) {
+    // temporarily, don't caption artworks
+    // (because the images have the gallery hardcoded
+    // and re-making them all is hard. Continue to use the
+    // location info to skip "Not on View" objects)
+  } else {
+    var gradient = document.createElement('div')
+    gradient.classList.add('gradient-overlay')
 
-  var gradient = document.createElement('div')
-  gradient.classList.add('gradient-overlay')
-
-  document.body.appendChild(text)
-  document.body.appendChild(gradient)
+    document.body.appendChild(text)
+    document.body.appendChild(gradient)
+  }
 }
 
 var transition = setInterval(function() {
@@ -51,16 +52,18 @@ var transition = setInterval(function() {
   var currentIndex = images.indexOf(relativeImageName)
   var nextIndex = (currentIndex+1) % (images.length-1)
 
-  var info = captionJson[images[nextIndex]]
-  while(info.location == 'Not on View') {
-    images.splice(nextIndex, 1)
-    console.info('id not on view, skipping', info)
-    info = captionJson[images[nextIndex]]
+  if(captionJson) {
+    var info = captionJson[images[nextIndex]]
+    while(info.location == 'Not on View') {
+      images.splice(nextIndex, 1)
+      console.info('id not on view, skipping', info)
+      info = captionJson[images[nextIndex]]
+    }
   }
 
   var nextImage = images[nextIndex]
   image.src = './'+nextImage
-  image.onload = fancyCaption
+  if(captionJson) image.onload = fancyCaption
 }, 11000)
 
 function fancyCaption() {
