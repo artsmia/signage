@@ -20,7 +20,7 @@ html:
 			caption=$$(cd $$screen; ls *.jpg | while read file; do \
 				wpId=$$(echo $$file | sed 's/.*wp-\(.*\).jpg/\1/'); \
 				curl --silent "https://new.artsmia.org/wp-json/wp/v2/exhibition/$$wpId?_embed" \
-				| jq --arg file "$$file" '{($$file): {title: .title.rendered, location: .acf.location}}'; \
+				| jq --arg file "$$file" '{($$file): {title: .title.rendered, location: .acf.location, dateFrom: .acf.exh_date_from, dateTo: .acf.exh_date_to}}'; \
 			done | jq -c -s 'add'); \
 		fi; \
 		if ls $$screen/*.jpg | grep ':id-' > /dev/null; then \
