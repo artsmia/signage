@@ -10,7 +10,7 @@ syncThumbdrives:
 		fi; \
 	done
 
-screens = $$(ls | grep 'UL-\ |LOWER-LOBBY')
+screens = $$(ls | grep 'UL-\|LOWER-LOBBY')
 html:
 	echo $(screens) | while read screen; do \
 		imageFiles=$$(ls -1v $$screen/ | grep '.jpg$$'); \
@@ -19,14 +19,14 @@ html:
 		if ls $$screen/*.jpg | grep '_wp-' > /dev/null; then \
 			caption=$$(cd $$screen; ls *.jpg | while read file; do \
 				wpId=$$(echo $$file | sed 's/.*wp-\(.*\).jpg/\1/'); \
-				curl --silent "http://new.artsmia.org/wp-json/wp/v2/exhibition/$$wpId?_embed" \
+				curl --silent "https://new.artsmia.org/wp-json/wp/v2/exhibition/$$wpId?_embed" \
 				| jq --arg file "$$file" '{($$file): {title: .title.rendered, location: .acf.location}}'; \
 			done | jq -c -s 'add'); \
 		fi; \
 		if ls $$screen/*.jpg | grep ':id-' > /dev/null; then \
 			caption=$$(cd $$screen; ls *.jpg | while read file; do \
 				objectId=$$(echo $$file | sed 's/.*:id-\(.*\).jpg/\1/'); \
-				curl --silent "http://search.artsmia.org/id/$$objectId" \
+				curl --silent "https://search.artsmia.org/id/$$objectId" \
 				| jq --arg file "$$file" '{($$file): {id: .id, title: .title, location: (.room | sub("G"; "Gallery ")), width: .image_width, height: .image_height}}'; \
 			done | jq -c -s 'add'); \
 		fi; \
