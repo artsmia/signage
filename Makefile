@@ -12,7 +12,7 @@ syncThumbdrives:
 
 screens = $$(ls | grep 'UL-\|LOWER-LOBBY')
 html:
-	echo $(screens) | while read screen; do \
+	echo $(screens) | tr ' ' '\n' | while read screen; do \
 		imageFiles=$$(ls -1v $$screen/ | grep '.jpg$$'); \
 		images=$$(echo $$imageFiles | tr '\n' ' ' | sed 's/\s+$$//'); \
 		[[ -f $$screen/index.md ]] && caption=$$(remark --use remark-html $$screen/index.md | tr -s '\n' ' '); \
@@ -50,6 +50,9 @@ writeAutoruns:
 		> $$screen/autorun.brs; \
 	done
 
+# This checks for exhibition dates by exhibition data from TMS,
+# we've opted to use exhibition data from our wordpress website for more
+# accurate dates.
 check-exhibition-dates:
 	@find . -name '*exhibition:*' | while read file; do \
 		id=$$(echo $$file | cut -d: -f2 | sed 's/.jpg//'); \

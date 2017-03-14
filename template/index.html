@@ -54,13 +54,13 @@ var transition = setInterval(function() {
 
   if(captionJson) {
     var info = captionJson[images[nextIndex]]
-    console.info(info)
     // skip to the next if:
     // an object is not on view per TMS
     // or an exhibition has ended per the calendar
     while(info.location == 'Not on View' || info.dateTo && new Date(info.dateTo) < new Date()) {
       images.splice(nextIndex, 1)
       console.info('not on view or ended, skipping', info)
+      nextIndex = (currentIndex+1) % (images.length-1)
       info = captionJson[images[nextIndex]]
     }
   }
