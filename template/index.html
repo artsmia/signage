@@ -7,8 +7,32 @@
 <body style="background-color:black;color:white;margin:0px;width:1920px; height: 1080px; overflow: hidden;">
 
 <script>
+function reloadAtTime(intendedTime, callback) {
+  // if it's time, call the callback
+  if (Date.now() > intendedTime) {
+    callback && callback()
+    return
+  }
+  
+  // Otherwise, wait 60 seconds, or, if we're within 1 minute wait the amount
+  // of seconds until the intended time, wait that much
+  // to re-call this function
+  var waitInterval = Math.min(intendedTime - Date.now(), 60000)
+  var funk = reloadAtTime.bind(this, intendedTime, callback)
+  setTimeout(funk, waitInterval)
+}
+
 var name = "__NAME__"
 var imageString = "__IMAGES__"
+if (name == "LOWER-LOBBY") {
+  imageString = "LL-right.jpg"
+  var timeToChange = new Date('2017-04-03 11:39')
+  console.info('will change to family day screen at ', new Date(timeToChange), new Date())
+  reloadAtTime(timeToChange, function() {
+    console.info("hey it's family day!")
+    image.src = './family.jpg'
+  })
+}
 var caption = `__CAPTION__`
 
 var images = imageString.split(" ").map(function(img) {
@@ -47,7 +71,7 @@ if(caption !== "") {
   }
 }
 
-var transition = setInterval(function() {
+var transition = images.length > 1 && setInterval(function() {
   var relativeImageName = image.src.match(/[^\/]+\.jpg$/)[0]
   var currentIndex = images.indexOf(relativeImageName)
   var nextIndex = (currentIndex+1) % (images.length-1)
