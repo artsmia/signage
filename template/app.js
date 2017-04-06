@@ -10,16 +10,45 @@ function reloadAtTime(intendedTime, callback) {
   // to re-call this function
   var waitInterval = Math.min(intendedTime - Date.now(), 60000)
   var funk = reloadAtTime.bind(this, intendedTime, callback)
+  // idea -> somehow harness multiple pis running chromium to
+  // log all console messages back to signage HQ?
+  console.info(
+    'reloatAtTime is waiting ',
+    waitInterval,
+    'ms and will go from there',
+    'in order to change the image on screen at ',
+    intendedTime,
+  )
   setTimeout(funk, waitInterval)
 }
 
 if (name == "LOWER-LOBBY") {
   imageString = "LL-right.jpg"
   var timeToChange = new Date('2017-04-08 16:45')
-  console.info('will change to family day screen at ', new Date(timeToChange), new Date())
+  var timeToChangeBack = new Date('2017-04-09 21:00')
+
+  if (window.location.search.match('debug')) {
+    // `?debug` will trigger the change 5 seconds after loading and change back in 9
+    timeToChange = Date.now() + 5000
+    timeToChangeBack = Date.now() + 9000
+  }
+
+  console.info(
+    'will change to family day screen at ',
+    new Date(timeToChange),
+    'and back to the regularly scheduled programming at',
+    new Date(timeToChangeBack),
+    '(right now, it is)',
+    new Date(),
+  )
+
   reloadAtTime(timeToChange, function() {
     console.info("hey it's family day!")
     image.src = './family.jpg'
+    reloadAtTime(timeToChangeBack, function() {
+      console.info("it's not family day any more!")
+      image.src = imageString
+    })
   })
 }
 
