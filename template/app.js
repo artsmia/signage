@@ -1,55 +1,52 @@
-function reloadAtTime(intendedTime, callback) {
-  // if it's time, call the callback
-  if (Date.now() > intendedTime) {
-    callback && callback()
-    return
-  }
-  
-  // Otherwise, wait 60 seconds, or, if we're within 1 minute wait the amount
-  // of seconds until the intended time, wait that much
-  // to re-call this function
-  var waitInterval = Math.min(intendedTime - Date.now(), 60000)
-  var funk = reloadAtTime.bind(this, intendedTime, callback)
-  // idea -> somehow harness multiple pis running chromium to
-  // log all console messages back to signage HQ?
-  console.info(
-    'reloatAtTime is waiting ',
-    waitInterval,
-    'ms and will go from there',
-    'in order to change the image on screen at ',
-    intendedTime,
-  )
-  setTimeout(funk, waitInterval)
-}
+if (name == 'LOWER-LOBBY') {
+  imageString = 'LL-right.jpg'
+  var nextThirdThursday = nthDayOfMonth('Thursday', 3, date => {
+    date.setHours(17)
+    date.setMinutes(30)
+    return date
+  })
+  var nextFamilyDay = nthDayOfMonth('Sunday', 2)
 
-if (name == "LOWER-LOBBY") {
-  imageString = "LL-right.jpg"
-  var timeToChange = new Date('2017-04-08 16:45')
-  var timeToChangeBack = new Date('2017-04-09 21:00')
+  var changeDates = [nextFamilyDay, nextThirdThursday]
+  .sort()
+  .filter(d => d > Date.now())
+  
+  var timeToChange, timeToChangeBack
+
+  if(changeDates.length > 0) {
+    timeToChange = changeDates[0]
+    timeToChangeBack = (d1 = new Date(timeToChange)).setHours(23) // 11pm that day
+  }
 
   if (window.location.search.match('debug')) {
-    // `?debug` will trigger the change 5 seconds after loading and change back in 9
+    // `?debug` will change 5s after loading and change back 9s after that
     timeToChange = Date.now() + 5000
-    timeToChangeBack = Date.now() + 9000
+    timeToChangeBack = timeToChange + 9000
   }
 
-  console.info(
-    'will change to family day screen at ',
-    new Date(timeToChange),
-    'and back to the regularly scheduled programming at',
-    new Date(timeToChangeBack),
-    '(right now, it is)',
-    new Date(),
-  )
-
-  reloadAtTime(timeToChange, function() {
-    console.info("hey it's family day!")
-    image.src = './family.jpg'
-    reloadAtTime(timeToChangeBack, function() {
-      console.info("it's not family day any more!")
-      image.src = imageString
+  var showSponsorImage = function () {
+    reloadAtTime(timeToChange, function () {
+      console.info("showing sponsor image")
+      image.src = './family.jpg'
+      reloadAtTime(timeToChangeBack, function () {
+        console.info("leaving sponsor image")
+        image.src = imageString
+      })
     })
-  })
+  }
+
+  if(timeToChange) {
+    console.info(
+      'will show sponsor image at ',
+      new Date(timeToChange),
+      'and back to the regularly scheduled programming at',
+      new Date(timeToChangeBack),
+      '(right now, it is)',
+      new Date()
+    )
+
+    setTimeout(showSponsorImage, 0)
+  }
 }
 
 var images = imageString.split(" ").map(function(img) {
@@ -88,33 +85,83 @@ if(caption !== "") {
   }
 }
 
-var transition = images.length > 1 && setInterval(function() {
-  var relativeImageName = image.src.match(/[^\/]+\.jpg$/)[0]
-  var currentIndex = images.indexOf(relativeImageName)
-  var nextIndex = (currentIndex+1) % (images.length-1)
+var transition = images.length > 1 &&
+  setInterval(
+    function () {
+      var relativeImageName = image.src.match(/[^\/]+\.jpg$/)[0]
+      var currentIndex = images.indexOf(relativeImageName)
+      var nextIndex = (currentIndex + 1) % (images.length - 1)
 
-  if(captionJson) {
-    var info = captionJson[images[nextIndex]]
-    // skip to the next if:
-    // an object is not on view per TMS
-    // or an exhibition has ended per the calendar
-    while(info.location == 'Not on View' || info.dateTo && new Date(info.dateTo) < new Date()) {
-      images.splice(nextIndex, 1)
-      console.info('not on view or ended, skipping', info)
-      nextIndex = (currentIndex+1) % (images.length-1)
-      info = captionJson[images[nextIndex]]
-    }
-  }
+      if (captionJson) {
+        var info = captionJson[images[nextIndex]]
+        // skip to the next if:
+        // an object is not on view per TMS
+        // or an exhibition has ended per the calendar
+        while (
+          info.location == 'Not on View' ||
+          (info.dateTo && new Date(info.dateTo) < new Date())
+        ) {
+          images.splice(nextIndex, 1)
+          console.info('not on view or ended, skipping', info)
+          nextIndex = (currentIndex + 1) % (images.length - 1)
+          info = captionJson[images[nextIndex]]
+        }
+      }
 
-  var nextImage = images[nextIndex]
-  image.src = './'+nextImage
-  if(captionJson) image.onload = fancyCaption
-}, 11000)
+      var nextImage = images[nextIndex]
+      image.src = './' + nextImage
+      if (captionJson) image.onload = fancyCaption
+    },
+    11000,
+  )
 
-function fancyCaption() {
+/* utility functions
+ */
+
+function fancyCaption () {
   var relativeImageName = image.src.match(/[^\/]+\.jpg$/)[0]
   var info = captionJson[relativeImageName]
-  if(info.id) return
+  if (info.id) return
   text.innerHTML = `<h1>${info.title}</h1> <h2>${info.location}</h2>`
 }
 
+function reloadAtTime (intendedTime, callback) {
+  // if it's time, call the callback
+  if (Date.now() > intendedTime) {
+    callback && callback()
+    return
+  }
+
+  // Otherwise, wait 60 seconds, or, if we're within 1 minute wait the amount
+  // of seconds until the intended time
+  // then re-call this function
+  var waitInterval = Math.min(intendedTime - Date.now(), 60000)
+  var funk = reloadAtTime.bind(this, intendedTime, callback)
+  // idea -> somehow harness multiple pis running chromium to
+  // log all console messages back to signage HQ?
+  console.info(
+    'reloatAtTime is waiting ',
+    waitInterval,
+    'ms and will go from there',
+    'in order to change the image on screen at ',
+    intendedTime
+  )
+  setTimeout(funk, waitInterval)
+}
+
+function nthDayOfMonth (dayName, week, dateModificationCallback) {
+  var days = 'sunday monday tuesday wednesday thursday friday saturday'
+  var desiredDayNumber = days.indexOf(dayName.toLowerCase())
+
+  var date = new Date()
+  var day1 = new Date(date.getFullYear(), date.getMonth(), 1)
+
+  var firstDesiredDate = new Date(
+    day1.setDate(day1.getDate() + (desiredDayNumber - 1 - day1.getDay() + 7) % 7 + 1)
+  )
+  var desiredDate = new Date(firstDesiredDate.setDate(firstDesiredDate.getDate() + 7*(week-1)))
+
+  return dateModificationCallback ?
+    dateModificationCallback(desiredDate) :
+    desiredDate
+}
