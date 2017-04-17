@@ -85,7 +85,7 @@ if(caption !== "") {
   }
 }
 
-var transition = images.length > 1 &&
+var transition = images.length > 1 && window.location.search !== '?debug' &&
   setInterval(
     function () {
       var relativeImageName = image.src.match(/[^\/]+\.jpg$/)[0]
@@ -112,7 +112,7 @@ var transition = images.length > 1 &&
       image.src = './' + nextImage
       if (captionJson) image.onload = fancyCaption
     },
-    11000,
+    11000
   )
 
 /* utility functions
@@ -122,7 +122,12 @@ function fancyCaption () {
   var relativeImageName = image.src.match(/[^\/]+\.jpg$/)[0]
   var info = captionJson[relativeImageName]
   if (info.id) return
-  text.innerHTML = `<h1>${info.title}</h1> <h2>${info.location}</h2>`
+  var endDate = new Date(info.dateTo)
+  var month = "Jan Feb Mar Apr May June July Aug Sep Oct Nov Dec".split(' ')[endDate.getMonth()]
+  var endsString = month + " " + endDate.getDate()
+  if(endDate.getFullYear() !== new Date().getFullYear()) endsString += ' ' + endDate.getFullYear()
+
+  text.innerHTML = `<h1>${info.title}</h1> <h2>${info.location} | Closes ${endsString}</h2>`
 }
 
 function reloadAtTime (intendedTime, callback) {

@@ -19,7 +19,8 @@ html:
 		if ls $$screen/*.jpg | grep '_wp-' > /dev/null; then \
 			caption=$$(cd $$screen; ls *.jpg | while read file; do \
 				wpId=$$(echo $$file | sed 's/.*wp-\(.*\).jpg/\1/'); \
-				curl --silent "https://new.artsmia.org/wp-json/wp/v2/exhibition/$$wpId?_embed" \
+				cachedJson=__cache/$$wpId.json; \
+				([ -f $$cachedJson ] && cat $$cachedJson || curl --silent "https://new.artsmia.org/wp-json/wp/v2/exhibition/$$wpId?_embed" | tee $$cachedJson) \
 				| jq --arg file "$$file" '{($$file): {title: .title.rendered, location: .acf.location, dateFrom: .acf.exh_date_from, dateTo: .acf.exh_date_to}}'; \
 			done | jq -c -s 'add'); \
 		fi; \
@@ -38,6 +39,7 @@ html:
 		sed "s/^#Version.*/#Version `date "+%y.%m%d.%H%M"`/" $$screen/manifest.mf | sponge $$screen/manifest.mf; \
 		echo $$imageFiles | tr ' ' '\n' >> $$screen/manifest.mf; \
 	done;
+	echo '.'
 
 .PHONY: html
 
