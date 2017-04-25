@@ -78,3 +78,22 @@ install:
 
 watch:
 	rewatch template/index.html Makefile -c "make html"
+
+# We have a large folder of images at `$(images)`
+# Each of these images should be assigned to one of three screens
+# TODO: generalify this
+images = art-in-bloom-images/*.jpg
+splitImagesAcrossThreeScreens:
+	@index=0; \
+	ls | grep UL- | while read screen; do \
+	  index=$$((index+1)); \
+		if [[ -d /Volumes/$$screen ]]; then \
+				echo $$screen; \
+				n=$$index; \
+				for file in $(images); do \
+						test $$n -eq 0 && cp "$$file" /Volumes/$$screen; \
+						n=$$((n+1)); \
+						n=$$((n%3)); \
+				done; \
+		fi; \
+	done

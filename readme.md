@@ -17,3 +17,14 @@ a webserver. Down the road we'll enable fancy live updates.
 - [ ] don't hardcode deploy location
 - [ ] don't be mac specific (remove `gls` dependency?)
 - [ ] convert single slides into their own html pages?
+
+# How it works
+
+TODO
+
+## Temporary screen images
+
+For one-off events, [splitImagesAcrossThreeScreens](./Makefile#L65)
+evenly distributes a set of images across three thumbdrives, which can
+be installed in the signage TVs and switched to manually at the start of
+the event.
