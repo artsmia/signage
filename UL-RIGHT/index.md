@@ -1,3 +1,3 @@
-# Guillermo del Toro:
-## At Home with Monsters
-**March 5 – May 28**
+# Matrimonial Bliss:
+## Chagall’s Double Portrait with Wine Glass
+**May 21 – July 30**
