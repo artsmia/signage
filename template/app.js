@@ -63,7 +63,7 @@ if (name == 'LOWER-LOBBY') {
 
 var images = imageString.split(" ").map(function(img) {
   return img
-})
+}).filter(img => !!img)
 
 var image = document.createElement('img')
 image.src = './'+images[0]
@@ -101,7 +101,7 @@ var transition = images.length > 1 && window.location.search !== '?debug' &&
     function () {
       var relativeImageName = image.src.match(/[^\/]+\.jpg$/)[0]
       var currentIndex = images.indexOf(relativeImageName)
-      var nextIndex = (currentIndex + 1) % (images.length - 1)
+      var nextIndex = (currentIndex + 1) % (images.length)
 
       if (captionJson) {
         var info = captionJson[images[nextIndex]]
