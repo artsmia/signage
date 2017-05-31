@@ -70,7 +70,7 @@ image.src = './'+images[0]
 
 document.body.appendChild(image)
 
-if(caption !== "") {
+if(caption !== "" && showLeftOrRightImage !== 'right') {
   var text = document.createElement('div')
   text.classList.add('caption')
   var captionJson;
