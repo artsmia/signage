@@ -1,58 +1,69 @@
+var showSpecificImage = window.location.hash.replace('#', '')
+var showLeftOrRightImage = showSpecificImage !== '' && showSpecificImage
+
+// Show the `Third Thursday / Family Day` thank you message
+// on all LOWER-LOBBY screens
+// except the left of the two in the lower lobby screens
+// (this is also used on the single screen in the Target lobby)
 if (name == 'LOWER-LOBBY') {
-  imageString = 'LL-right.jpg'
-  var nextThirdThursday = nthDayOfMonth('Thursday', 3, date => {
-    date.setHours(17)
-    date.setMinutes(30)
-    return date
-  })
-  var nextFamilyDay = nthDayOfMonth('Sunday', 2)
+  imageString = showLeftOrRightImage
+    ? 'LL-' + showLeftOrRightImage + '.jpg'
+    : 'LL-left.jpg LL-right.jpg'
 
-  var changeDates = [nextFamilyDay, nextThirdThursday]
-  .sort()
-  .filter(d => d > Date.now())
-  
-  var timeToChange, timeToChangeBack
-
-  if(changeDates.length > 0) {
-    timeToChange = changeDates[0]
-    timeToChangeBack = (d1 = new Date(timeToChange)).setHours(23) // 11pm that day
-  }
-
-  if (window.location.search.match('debug')) {
-    // `?debug` will change 5s after loading and change back 9s after that
-    timeToChange = Date.now() + 5000
-    timeToChangeBack = timeToChange + 9000
-  }
-
-  var showSponsorImage = function () {
-    reloadAtTime(timeToChange, function () {
-      console.info("showing sponsor image")
-      image.src = './family.jpg'
-      reloadAtTime(timeToChangeBack, function () {
-        console.info("leaving sponsor image")
-        image.src = imageString
-      })
+  if(showLeftOrRightImage !== '' && showLeftOrRightImage !== 'left') {
+    var nextThirdThursday = nthDayOfMonth('Thursday', 3, date => {
+      date.setHours(17)
+      date.setMinutes(30)
+      return date
     })
-  }
+    var nextFamilyDay = nthDayOfMonth('Sunday', 2)
 
-  if(timeToChange) {
-    console.info(
-      'will show sponsor image at ',
-      new Date(timeToChange),
-      'and back to the regularly scheduled programming at',
-      new Date(timeToChangeBack),
-      '(right now, it is)',
-      new Date()
-    )
+    var changeDates = [nextFamilyDay, nextThirdThursday]
+    .sort()
+    .filter(d => d > Date.now())
+    
+    var timeToChange, timeToChangeBack
 
-    setTimeout(showSponsorImage, 0)
+    if(changeDates.length > 0) {
+      timeToChange = changeDates[0]
+      timeToChangeBack = (d1 = new Date(timeToChange)).setHours(23) // 11pm that day
+    }
+
+    if (window.location.search.match('debug')) {
+      // `?debug` will change 5s after loading and change back 9s after that
+      timeToChange = Date.now() + 5000
+      timeToChangeBack = timeToChange + 9000
+    }
+
+    var showSponsorImage = function () {
+      reloadAtTime(timeToChange, function () {
+        console.info("showing sponsor image")
+        image.src = './family.jpg'
+        reloadAtTime(timeToChangeBack, function () {
+          console.info("leaving sponsor image")
+          image.src = imageString.split(' ')[0]
+        })
+      })
+    }
+
+    if(timeToChange) {
+      console.info(
+        'will show sponsor image at ',
+        new Date(timeToChange),
+        'and back to the regularly scheduled programming at',
+        new Date(timeToChangeBack),
+        '(right now, it is)',
+        new Date()
+      )
+
+      setTimeout(showSponsorImage, 0)
+    }
   }
 }
 
 var images = imageString.split(" ").map(function(img) {
   return img
 })
-
 
 var image = document.createElement('img')
 image.src = './'+images[0]
