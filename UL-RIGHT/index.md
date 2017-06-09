@@ -1,3 +1,3 @@
-# Matrimonial Bliss:
-## Chagall’s Double Portrait with Wine Glass
-**May 21 – July 30**
+# Eyewitness Views:
+## Making History in Eighteenth-Century Europe
+**September 10 – December 31**
