@@ -1,5 +1,6 @@
 var showSpecificImage = window.location.hash.replace('#', '')
 var showLeftOrRightImage = showSpecificImage !== '' && showSpecificImage
+var currentlyShowingSponsorImage = false
 
 // Show the `Third Thursday / Family Day` thank you message
 // on all LOWER-LOBBY screens
@@ -39,8 +40,12 @@ if (name == 'LOWER-LOBBY') {
       reloadAtTime(timeToChange, function () {
         console.info("showing sponsor image")
         image.src = './family.jpg'
+        currentlyShowingSponsorImage = true
+        Array.from(document.querySelectorAll('.caption, .gradient-overlay')).map(el => el.style.visibility = 'hidden')
         reloadAtTime(timeToChangeBack, function () {
           console.info("leaving sponsor image")
+          currentlyShowingSponsorImage = false
+          Array.from(document.querySelectorAll('.caption, .gradient-overlay')).map(el => el.style.visibility = 'visible')
           image.src = imageString.split(' ')[0]
         })
       })
@@ -99,29 +104,31 @@ if(caption !== "" && showLeftOrRightImage !== 'right') {
 var transition = images.length > 1 && window.location.search !== '?debug' &&
   setInterval(
     function () {
-      var relativeImageName = image.src.match(/[^\/]+\.jpg$/)[0]
-      var currentIndex = images.indexOf(relativeImageName)
-      var nextIndex = (currentIndex + 1) % (images.length)
+      if(!currentlyShowingSponsorImage) {
+        var relativeImageName = image.src.match(/[^\/]+\.jpg$/)[0]
+        var currentIndex = images.indexOf(relativeImageName)
+        var nextIndex = (currentIndex + 1) % (images.length)
 
-      if (captionJson) {
-        var info = captionJson[images[nextIndex]]
-        // skip to the next if:
-        // an object is not on view per TMS
-        // or an exhibition has ended per the calendar
-        while (
-          info.location == 'Not on View' ||
-          (info.dateTo && new Date(info.dateTo) < new Date())
-        ) {
-          images.splice(nextIndex, 1)
-          console.info('not on view or ended, skipping', info)
-          nextIndex = (currentIndex + 1) % (images.length - 1)
-          info = captionJson[images[nextIndex]]
+        if (captionJson) {
+          var info = captionJson[images[nextIndex]]
+          // skip to the next if:
+          // an object is not on view per TMS
+          // or an exhibition has ended per the calendar
+          while (
+            info.location == 'Not on View' ||
+            (info.dateTo && new Date(info.dateTo) < new Date())
+          ) {
+            images.splice(nextIndex, 1)
+            console.info('not on view or ended, skipping', info)
+            nextIndex = (currentIndex + 1) % (images.length - 1)
+            info = captionJson[images[nextIndex]]
+          }
         }
-      }
 
-      var nextImage = images[nextIndex]
-      image.src = './' + nextImage
-      if (captionJson) image.onload = fancyCaption
+        var nextImage = images[nextIndex]
+        image.src = './' + nextImage
+        if (captionJson) image.onload = fancyCaption
+      }
     },
     11000
   )
