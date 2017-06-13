@@ -19,14 +19,16 @@ if (name == 'LOWER-LOBBY') {
     })
     var nextFamilyDay = nthDayOfMonth('Sunday', 2)
 
-    var changeDates = [nextFamilyDay, nextThirdThursday]
-    .sort()
+    // if it's between the start time of a sponsored event and 11pm that day,
+    // we want to show the sponsor screen
+    var showSponsorScreen = [nextFamilyDay, nextThirdThursday]
+    .sort((d1, d2) => d1 >= d2)
     .filter(d => d > Date.now())
     
     var timeToChange, timeToChangeBack
 
-    if(changeDates.length > 0) {
-      timeToChange = changeDates[0]
+    if(showSponsorScreen.length > 0) {
+      timeToChange = showSponsorScreen[0]
       timeToChangeBack = (d1 = new Date(timeToChange)).setHours(23) // 11pm that day
     }
 
@@ -38,8 +40,10 @@ if (name == 'LOWER-LOBBY') {
 
     var showSponsorImage = function () {
       reloadAtTime(timeToChange, function () {
-        console.info("showing sponsor image")
-        image.src = './family.jpg'
+        var day = (new Date()).getDay()
+        var imageFile = day === 4 ? './third-thursday.jpg' : './family.jpg'
+        console.info("showing sponsor image for", day, imageFile)
+        image.src = imageFile
         currentlyShowingSponsorImage = true
         Array.from(document.querySelectorAll('.caption, .gradient-overlay')).map(el => el.style.visibility = 'hidden')
         reloadAtTime(timeToChangeBack, function () {
@@ -167,13 +171,13 @@ function reloadAtTime (intendedTime, callback) {
     waitInterval,
     'ms and will go from there',
     'in order to change the image on screen at ',
-    intendedTime
+    new Date(intendedTime)
   )
   setTimeout(funk, waitInterval)
 }
 
 function nthDayOfMonth (dayName, week, dateModificationCallback) {
-  var days = 'sunday monday tuesday wednesday thursday friday saturday'
+  var days = 'sunday monday tuesday wednesday thursday friday saturday'.split(' ')
   var desiredDayNumber = days.indexOf(dayName.toLowerCase())
 
   var date = new Date()
