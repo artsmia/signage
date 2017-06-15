@@ -184,7 +184,7 @@ function nthDayOfMonth (dayName, week, dateModificationCallback) {
   var day1 = new Date(date.getFullYear(), date.getMonth(), 1)
 
   var firstDesiredDate = new Date(
-    day1.setDate(day1.getDate() + (desiredDayNumber - 1 - day1.getDay() + 7) % 7 + 1)
+    day1.setDate((day1.getDate() + (desiredDayNumber - 1 - day1.getDay() + 7)) % 7 + 1)
   )
   var desiredDate = new Date(firstDesiredDate.setDate(firstDesiredDate.getDate() + 7*(week-1)))
 
