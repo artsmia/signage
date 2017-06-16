@@ -11,7 +11,7 @@ if (name == 'LOWER-LOBBY') {
     ? 'LL-' + showLeftOrRightImage + '.jpg'
     : 'LL-left.jpg LL-right.jpg'
 
-  if(showLeftOrRightImage !== '' && showLeftOrRightImage !== 'left') {
+  if (showLeftOrRightImage !== '' && showLeftOrRightImage !== 'left') {
     var nextThirdThursday = nthDayOfMonth('Thursday', 3, date => {
       date.setHours(17)
       date.setMinutes(30)
@@ -21,14 +21,14 @@ if (name == 'LOWER-LOBBY') {
 
     // if it's between the start time of a sponsored event and 11pm that day,
     // we want to show the sponsor screen
-    var showSponsorScreen = [nextFamilyDay, nextThirdThursday]
-    .sort((d1, d2) => d1 >= d2)
-    .filter(d => d > Date.now())
-    
+    var sponsoredDays = [nextFamilyDay, nextThirdThursday]
+      .sort((d1, d2) => d1 >= d2)
+      .filter(d => d > Date.now())
+
     var timeToChange, timeToChangeBack
 
-    if(showSponsorScreen.length > 0) {
-      timeToChange = showSponsorScreen[0]
+    if (sponsoredDays.length > 0) {
+      timeToChange = sponsoredDays[0]
       timeToChangeBack = (d1 = new Date(timeToChange)).setHours(23) // 11pm that day
     }
 
@@ -38,24 +38,28 @@ if (name == 'LOWER-LOBBY') {
       timeToChangeBack = timeToChange + 9000
     }
 
-    var showSponsorImage = function () {
-      reloadAtTime(timeToChange, function () {
-        var day = (new Date()).getDay()
+    var showSponsorImage = function() {
+      reloadAtTime(timeToChange, function() {
+        var day = new Date().getDay()
         var imageFile = day === 4 ? './third-thursday.jpg' : './family.jpg'
-        console.info("showing sponsor image for", day, imageFile)
+        console.info('showing sponsor image for', day, imageFile)
         image.src = imageFile
         currentlyShowingSponsorImage = true
-        Array.from(document.querySelectorAll('.caption, .gradient-overlay')).map(el => el.style.visibility = 'hidden')
-        reloadAtTime(timeToChangeBack, function () {
-          console.info("leaving sponsor image")
+        Array.from(
+          document.querySelectorAll('.caption, .gradient-overlay')
+        ).map(el => (el.style.visibility = 'hidden'))
+        reloadAtTime(timeToChangeBack, function() {
+          console.info('leaving sponsor image')
           currentlyShowingSponsorImage = false
-          Array.from(document.querySelectorAll('.caption, .gradient-overlay')).map(el => el.style.visibility = 'visible')
+          Array.from(
+            document.querySelectorAll('.caption, .gradient-overlay')
+          ).map(el => (el.style.visibility = 'visible'))
           image.src = imageString.split(' ')[0]
         })
       })
     }
 
-    if(timeToChange) {
+    if (timeToChange) {
       console.info(
         'will show sponsor image at ',
         new Date(timeToChange),
@@ -70,28 +74,31 @@ if (name == 'LOWER-LOBBY') {
   }
 }
 
-var images = imageString.split(" ").map(function(img) {
-  return img
-}).filter(img => !!img)
+var images = imageString
+  .split(' ')
+  .map(function(img) {
+    return img
+  })
+  .filter(img => !!img)
 
 var image = document.createElement('img')
-image.src = './'+images[0]
+image.src = './' + images[0]
 
 document.body.appendChild(image)
 
-if(caption !== "" && showLeftOrRightImage !== 'right') {
+if (caption !== '' && showLeftOrRightImage !== 'right') {
   var text = document.createElement('div')
   text.classList.add('caption')
-  var captionJson;
+  var captionJson
   try {
     captionJson = JSON.parse(caption)
     fancyCaption()
-  } catch(test) {
+  } catch (test) {
     captionJson = false
     text.innerHTML = caption
   }
 
-  if(captionJson && Object.values(captionJson)[0].id) {
+  if (captionJson && Object.values(captionJson)[0].id) {
     // temporarily, don't caption artworks
     // (because the images have the gallery hardcoded
     // and re-making them all is hard. Continue to use the
@@ -105,54 +112,56 @@ if(caption !== "" && showLeftOrRightImage !== 'right') {
   }
 }
 
-var transition = images.length > 1 && window.location.search !== '?debug' &&
-  setInterval(
-    function () {
-      if(!currentlyShowingSponsorImage) {
-        var relativeImageName = image.src.match(/[^\/]+\.jpg$/)[0]
-        var currentIndex = images.indexOf(relativeImageName)
-        var nextIndex = (currentIndex + 1) % (images.length)
+var transition =
+  images.length > 1 &&
+  window.location.search !== '?debug' &&
+  setInterval(function() {
+    if (!currentlyShowingSponsorImage) {
+      var relativeImageName = image.src.match(/[^\/]+\.jpg$/)[0]
+      var currentIndex = images.indexOf(relativeImageName)
+      var nextIndex = (currentIndex + 1) % images.length
 
-        if (captionJson) {
-          var info = captionJson[images[nextIndex]]
-          // skip to the next if:
-          // an object is not on view per TMS
-          // or an exhibition has ended per the calendar
-          while (
-            info.location == 'Not on View' ||
-            (info.dateTo && new Date(info.dateTo) < new Date())
-          ) {
-            images.splice(nextIndex, 1)
-            console.info('not on view or ended, skipping', info)
-            nextIndex = (currentIndex + 1) % (images.length - 1)
-            info = captionJson[images[nextIndex]]
-          }
+      if (captionJson) {
+        var info = captionJson[images[nextIndex]]
+        // skip to the next if:
+        // an object is not on view per TMS
+        // or an exhibition has ended per the calendar
+        while (
+          info.location == 'Not on View' ||
+          (info.dateTo && new Date(info.dateTo) < new Date())
+        ) {
+          images.splice(nextIndex, 1)
+          console.info('not on view or ended, skipping', info)
+          nextIndex = (currentIndex + 1) % (images.length - 1)
+          info = captionJson[images[nextIndex]]
         }
-
-        var nextImage = images[nextIndex]
-        image.src = './' + nextImage
-        if (captionJson) image.onload = fancyCaption
       }
-    },
-    11000
-  )
+
+      var nextImage = images[nextIndex]
+      image.src = './' + nextImage
+      if (captionJson) image.onload = fancyCaption
+    }
+  }, 11000)
 
 /* utility functions
  */
 
-function fancyCaption () {
+function fancyCaption() {
   var relativeImageName = image.src.match(/[^\/]+\.jpg$/)[0]
   var info = captionJson[relativeImageName]
   if (info.id) return
   var endDate = new Date(info.dateTo)
-  var month = "Jan Feb Mar Apr May June July Aug Sep Oct Nov Dec".split(' ')[endDate.getMonth()]
-  var endsString = month + " " + endDate.getDate()
-  if(endDate.getFullYear() !== new Date().getFullYear()) endsString += ' ' + endDate.getFullYear()
+  var month = 'Jan Feb Mar Apr May June July Aug Sep Oct Nov Dec'.split(' ')[
+    endDate.getMonth()
+  ]
+  var endsString = month + ' ' + endDate.getDate()
+  if (endDate.getFullYear() !== new Date().getFullYear())
+    endsString += ' ' + endDate.getFullYear()
 
   text.innerHTML = `<h1>${info.title}</h1> <h2>${info.location} | Closes ${endsString}</h2>`
 }
 
-function reloadAtTime (intendedTime, callback) {
+function reloadAtTime(intendedTime, callback) {
   // if it's time, call the callback
   if (Date.now() > intendedTime) {
     callback && callback()
@@ -176,22 +185,34 @@ function reloadAtTime (intendedTime, callback) {
   setTimeout(funk, waitInterval)
 }
 
-function nthDayOfMonth (dayName, week, dateModificationCallback, monthPad=0) {
-  var days = 'sunday monday tuesday wednesday thursday friday saturday'.split(' ')
+function nthDayOfMonth(dayName, week, dateModificationCallback, monthPad = 0) {
+  var days = 'sunday monday tuesday wednesday thursday friday saturday'.split(
+    ' '
+  )
   var desiredDayNumber = days.indexOf(dayName.toLowerCase())
 
   var date = new Date()
-  var day1 = new Date(date.getFullYear(), date.getMonth()+monthPad, 1)
+  var day1 = new Date(date.getFullYear(), date.getMonth() + monthPad, 1)
 
   var firstDesiredDate = new Date(
-    day1.setDate((day1.getDate() + (desiredDayNumber - 1 - day1.getDay() + 7)) % 7 + 1)
+    day1.setDate(
+      (day1.getDate() + (desiredDayNumber - 1 - day1.getDay() + 7)) % 7 + 1
+    )
   )
-  var desiredDate = new Date(firstDesiredDate.setDate(firstDesiredDate.getDate() + 7*(week-1)))
+  var desiredDate = new Date(
+    firstDesiredDate.setDate(firstDesiredDate.getDate() + 7 * (week - 1))
+  )
 
   // if it's already past the target date, jump forward a month
-  if(desiredDate < Date.now()) return nthDayOfMonth(dayName, week, dateModificationCallback, monthPad=1)
+  if (desiredDate < Date.now())
+    return nthDayOfMonth(
+      dayName,
+      week,
+      dateModificationCallback,
+      (monthPad = 1)
+    )
 
-  return dateModificationCallback ?
-    dateModificationCallback(desiredDate) :
-    desiredDate
+  return dateModificationCallback
+    ? dateModificationCallback(desiredDate)
+    : desiredDate
 }
