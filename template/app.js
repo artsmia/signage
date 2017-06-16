@@ -176,17 +176,20 @@ function reloadAtTime (intendedTime, callback) {
   setTimeout(funk, waitInterval)
 }
 
-function nthDayOfMonth (dayName, week, dateModificationCallback) {
+function nthDayOfMonth (dayName, week, dateModificationCallback, monthPad=0) {
   var days = 'sunday monday tuesday wednesday thursday friday saturday'.split(' ')
   var desiredDayNumber = days.indexOf(dayName.toLowerCase())
 
   var date = new Date()
-  var day1 = new Date(date.getFullYear(), date.getMonth(), 1)
+  var day1 = new Date(date.getFullYear(), date.getMonth()+monthPad, 1)
 
   var firstDesiredDate = new Date(
     day1.setDate((day1.getDate() + (desiredDayNumber - 1 - day1.getDay() + 7)) % 7 + 1)
   )
   var desiredDate = new Date(firstDesiredDate.setDate(firstDesiredDate.getDate() + 7*(week-1)))
+
+  // if it's already past the target date, jump forward a month
+  if(desiredDate < Date.now()) return nthDayOfMonth(dayName, week, dateModificationCallback, monthPad=1)
 
   return dateModificationCallback ?
     dateModificationCallback(desiredDate) :
