@@ -55,6 +55,7 @@ if (name == 'LOWER-LOBBY') {
             document.querySelectorAll('.caption, .gradient-overlay')
           ).map(el => (el.style.visibility = 'visible'))
           image.src = imageString.split(' ')[0]
+          setTimeout(window.location.reload, 1000) // reload to set up for the next sponsored event
         })
       })
     }
