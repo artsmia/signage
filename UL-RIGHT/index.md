@@ -1,3 +1,3 @@
 # Eyewitness Views:
-## Making History in Eighteenth-Century Europe
+## Making History in 18th-Century Europe
 **September 10 – December 31**
