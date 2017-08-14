@@ -19,11 +19,15 @@ if (name == 'LOWER-LOBBY') {
     })
     var nextFamilyDay = nthDayOfMonth('Sunday', 2)
 
+    // For debugging
+    // var nextToday = new Date().setHours(0, 0, 0, 0)
+    // var sponsoredDays = [nextFamilyDay, nextThirdThursday, nextToday]
+
     // if it's between the start time of a sponsored event and 11pm that day,
     // we want to show the sponsor screen
     var sponsoredDays = [nextFamilyDay, nextThirdThursday]
       .sort((d1, d2) => d1 >= d2)
-      .filter(d => d > Date.now())
+      .filter(d => d >= new Date().setHours(0, 0, 0, 0))
 
     var timeToChange, timeToChangeBack
 
@@ -205,7 +209,7 @@ function nthDayOfMonth(dayName, week, dateModificationCallback, monthPad = 0) {
   )
 
   // if it's already past the target date, jump forward a month
-  if (desiredDate < Date.now())
+  if (desiredDate < new Date().setHours(0, 0, 0, 0))
     return nthDayOfMonth(
       dayName,
       week,
