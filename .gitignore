@@ -3,5 +3,13 @@
 */._*
 */.Trashes
 */.DS_Store
+
 UL*/index.html
 UL*/manifest.mf
+UL*/autorun.brs
+UL*/app.js
+UL*/__cache
+LOWER-LOBBY/index.html
+LOWER-LOBBY/manifest.mf
+LOWER-LOBBY/app.js
+LOWER-LOBBY/__cache
