@@ -1,7 +1,7 @@
 var showSpecificImage = window.location.hash.replace('#', '')
 var showLeftOrRightImage = showSpecificImage !== '' && showSpecificImage
 var currentlyShowingSponsorImage = false
-
+var currentlyShowingEventImage = false
 // Show the `Third Thursday / Family Day` thank you message
 // on all LOWER-LOBBY screens
 // except the left of the two in the lower lobby screens
@@ -18,7 +18,11 @@ if (name == 'LOWER-LOBBY') {
       return date
     })
     var nextFamilyDay = nthDayOfMonth('Sunday', 2)
-
+    var pdFair = nthDayOfMonth('Friday', 1, date => {
+      date.setHours(15)
+      date.setMinutes(00)
+      return date
+    })
     // For debugging
     // var nextToday = new Date().setHours(0, 0, 0, 0)
     // var sponsoredDays = [nextFamilyDay, nextThirdThursday, nextToday]
@@ -29,17 +33,51 @@ if (name == 'LOWER-LOBBY') {
       .sort((d1, d2) => d1 >= d2)
       .filter(d => d >= new Date().setHours(0, 0, 0, 0))
 
+    var Event = [pdFair]
+      .sort((d1, d2) => d1 >= d2)
+      .filter(d => d >= new Date().setHours(0, 0, 0, 0))
+
     var timeToChange, timeToChangeBack
 
     if (sponsoredDays.length > 0) {
       timeToChange = sponsoredDays[0]
       timeToChangeBack = (d1 = new Date(timeToChange)).setHours(23) // 11pm that day
     }
+    if (Event.length > 0) {
+      timeToChangeEvent = Event[0]
+      timeToChangeEventBack = (d1 = new Date(timeToChangeEvent)).setHours(23) // 11pm that day
+    }
 
     if (window.location.search.match('debug')) {
       // `?debug` will change 5s after loading and change back 9s after that
       timeToChange = Date.now() + 5000
       timeToChangeBack = timeToChange + 9000
+    }
+    if (window.location.search.match('event')) {
+      // `?debug` will change 5s after loading and change back 9s after that
+      timeToChangeEvent = Date.now() + 5000
+      timeToChangeEventBack = timeToChangeEvent + 9000
+    }
+    var showEventImage = function() {
+      reloadAtTime(timeToChangeEvent, function() {
+        var day = new Date().getDay()
+        var imageFile = './PnD_Fair17_DigitalPrices_White.jpg'
+        console.info('showing PD Fair image for', day, imageFile)
+        image.src = imageFile
+        currentlyShowingEventImage = true
+        Array.from(
+          document.querySelectorAll('.caption, .gradient-overlay')
+        ).map(el => (el.style.visibility = 'hidden'))
+        reloadAtTime(timeToChangeEventBack, function() {
+          console.info('leaving sponsor image')
+          currentlyShowingEventImage = false
+          Array.from(
+            document.querySelectorAll('.caption, .gradient-overlay')
+          ).map(el => (el.style.visibility = 'visible'))
+          image.src = imageString.split(' ')[0]
+          setTimeout(window.location.reload, 1000) // reload to set up for the next sponsored event
+        })
+      })
     }
 
     var showSponsorImage = function() {
@@ -75,6 +113,18 @@ if (name == 'LOWER-LOBBY') {
       )
 
       setTimeout(showSponsorImage, 0)
+    }
+    if (timeToChangeEvent) {
+      console.info(
+        'will show event image at ',
+        new Date(timeToChangeEvent),
+        'and back to the regularly scheduled programming at',
+        new Date(timeToChangeEventBack),
+        '(right now, it is)',
+        new Date()
+      )
+
+      setTimeout(showEventImage, 0)
     }
   }
 }
