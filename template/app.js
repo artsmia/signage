@@ -171,7 +171,7 @@ var transition =
   images.length > 1 &&
   window.location.search !== '?debug' &&
   setInterval(function() {
-    if (!currentlyShowingSponsorImage) {
+    if (!currentlyShowingSponsorImage && !currentlyShowingEventImage) {
       var relativeImageName = image.src.match(/[^\/]+\.jpg$/)[0]
       var currentIndex = images.indexOf(relativeImageName)
       var nextIndex = (currentIndex + 1) % images.length
