@@ -10,7 +10,7 @@ syncThumbdrives:
 		fi; \
 	done
 
-screens = $$(ls | grep 'UL-\|LOWER-LOBBY')
+screens = $$(ls | grep 'UL-\|LOWER-LOBBY\|TARGET-ATRIUM')
 html:
 	echo $(screens) | tr ' ' '\n' | while read screen; do \
 		imageFiles=$$(ls -1v $$screen/ | grep '.jpg$$'); \
