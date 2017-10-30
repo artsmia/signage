@@ -13,6 +13,9 @@ if (name == 'LOWER-LOBBY') {
 
   if (showLeftOrRightImage !== 'left') {
     imageString = 'LL-right-1.jpg LL-right-2.jpg'
+    Array.from(document.querySelectorAll('.caption, .gradient-overlay')).map(
+      el => (el.style.visibility = 'hidden')
+    )
     var nextThirdThursday = nthDayOfMonth('Thursday', 3, date => {
       date.setHours(17)
       date.setMinutes(30)
