@@ -8,11 +8,11 @@ var currentlyShowingEventImage = false
 // (this is also used on the single screen in the Target lobby)
 if (name == 'LOWER-LOBBY') {
   if (showLeftOrRightImage === 'left') {
-    imageString = 'LL-left-1.png LL-left-2.png LL-left-3.png LL-left-4.png'
+    imageString = 'LL-left-1.jpg LL-left-2.jpg LL-left-3.jpg LL-left-4.jpg'
   }
 
   if (showLeftOrRightImage !== 'left') {
-    imageString = 'LL-right-1.png LL-right-2.png LL-right-3.png LL-right-4.png'
+    imageString = 'LL-right-1.jpg LL-right-2.jpg LL-right-3.jpg LL-right-4.jpg'
     Array.from(document.querySelectorAll('.caption, .gradient-overlay')).map(
       el => (el.style.visibility = 'hidden')
     )
@@ -133,7 +133,7 @@ if (name == 'LOWER-LOBBY') {
   }
 }
 if (name == 'TARGET-ATRIUM') {
-  imageString = 'atrium-1.png atrium-2.png atrium-3.png atrium-4.png'
+  imageString = 'atrium-1.jpg atrium-2.jpg atrium-3.jpg atrium-4.jpg'
 
   //if (showLeftOrRightImage !== '' && showLeftOrRightImage !== 'left') {
   var nextThirdThursday = nthDayOfMonth('Thursday', 3, date => {
