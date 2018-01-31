@@ -13,7 +13,7 @@ if (name == 'LOWER-LOBBY') {
 
   if (showLeftOrRightImage !== 'left') {
     imageString = 'LL-right-1.jpg LL-right-2.jpg LL-right-3.jpg LL-right-4.jpg'
-    Array.from(document.querySelectorAll('.caption, .gradient-overlay')).map(
+    Array.from(document.querySelectorAll('.caption')).map(
       el => (el.style.visibility = 'hidden')
     )
     var nextThirdThursday = nthDayOfMonth('Thursday', 3, date => {
@@ -69,15 +69,15 @@ if (name == 'LOWER-LOBBY') {
         console.info('showing PD Fair image for', day, imageFile)
         image.src = imageFile
         currentlyShowingEventImage = true
-        Array.from(
-          document.querySelectorAll('.caption, .gradient-overlay')
-        ).map(el => (el.style.visibility = 'hidden'))
+        Array.from(document.querySelectorAll('.caption')).map(
+          el => (el.style.visibility = 'hidden')
+        )
         reloadAtTime(timeToChangeEventBack, function() {
           console.info('leaving sponsor image')
           currentlyShowingEventImage = false
-          Array.from(
-            document.querySelectorAll('.caption, .gradient-overlay')
-          ).map(el => (el.style.visibility = 'visible'))
+          Array.from(document.querySelectorAll('.caption')).map(
+            el => (el.style.visibility = 'visible')
+          )
           image.src = imageString.split(' ')[0]
           setTimeout(window.location.reload, 1000) // reload to set up for the next sponsored event
         })
@@ -91,15 +91,15 @@ if (name == 'LOWER-LOBBY') {
         console.info('showing sponsor image for', day, imageFile)
         image.src = imageFile
         currentlyShowingSponsorImage = true
-        Array.from(
-          document.querySelectorAll('.caption, .gradient-overlay')
-        ).map(el => (el.style.visibility = 'hidden'))
+        Array.from(document.querySelectorAll('.caption')).map(
+          el => (el.style.visibility = 'hidden')
+        )
         reloadAtTime(timeToChangeBack, function() {
           console.info('leaving sponsor image')
           currentlyShowingSponsorImage = false
-          Array.from(
-            document.querySelectorAll('.caption, .gradient-overlay')
-          ).map(el => (el.style.visibility = 'visible'))
+          Array.from(document.querySelectorAll('.caption')).map(
+            el => (el.style.visibility = 'visible')
+          )
           image.src = imageString.split(' ')[0]
           setTimeout(window.location.reload, 1000) // reload to set up for the next sponsored event
         })
@@ -189,15 +189,15 @@ if (name == 'TARGET-ATRIUM') {
       console.info('showing PD Fair image for', day, imageFile)
       image.src = imageFile
       currentlyShowingEventImage = true
-      Array.from(document.querySelectorAll('.caption, .gradient-overlay')).map(
+      Array.from(document.querySelectorAll('.caption')).map(
         el => (el.style.visibility = 'hidden')
       )
       reloadAtTime(timeToChangeEventBack, function() {
         console.info('leaving sponsor image')
         currentlyShowingEventImage = false
-        Array.from(
-          document.querySelectorAll('.caption, .gradient-overlay')
-        ).map(el => (el.style.visibility = 'visible'))
+        Array.from(document.querySelectorAll('.caption')).map(
+          el => (el.style.visibility = 'visible')
+        )
         image.src = imageString.split(' ')[0]
         setTimeout(window.location.reload, 1000) // reload to set up for the next sponsored event
       })
@@ -211,15 +211,15 @@ if (name == 'TARGET-ATRIUM') {
       console.info('showing sponsor image for', day, imageFile)
       image.src = imageFile
       currentlyShowingSponsorImage = true
-      Array.from(document.querySelectorAll('.caption, .gradient-overlay')).map(
+      Array.from(document.querySelectorAll('.caption')).map(
         el => (el.style.visibility = 'hidden')
       )
       reloadAtTime(timeToChangeBack, function() {
         console.info('leaving sponsor image')
         currentlyShowingSponsorImage = false
-        Array.from(
-          document.querySelectorAll('.caption, .gradient-overlay')
-        ).map(el => (el.style.visibility = 'visible'))
+        Array.from(document.querySelectorAll('.caption')).map(
+          el => (el.style.visibility = 'visible')
+        )
         image.src = imageString.split(' ')[0]
         setTimeout(window.location.reload, 1000) // reload to set up for the next sponsored event
       })
