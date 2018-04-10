@@ -4,16 +4,13 @@
 */.Trashes
 */.DS_Store
 
-UL*/index.html
-UL*/manifest.mf
-UL*/autorun.brs
-UL*/app.js
-UL*/__cache
-LOWER-LOBBY/index.html
-LOWER-LOBBY/manifest.mf
-LOWER-LOBBY/app.js
-LOWER-LOBBY/__cache
-TARGET-ATRIUM/index.html
-TARGET-ATRIUM/manifest.mf
-TARGET-ATRIUM/app.js
-TARGET-ATRIUM/__cache
+*/index.html
+*/manifest.mf
+*/autorun.brs
+*/app.js
+*/__cache
+*/caption.json
+*/*.png
+!template/index.html
+!template/app.js
+.envrc
