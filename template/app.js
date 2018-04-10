@@ -276,7 +276,7 @@ if (caption !== '' && showLeftOrRightImage !== 'right') {
     text.innerHTML = caption
   }
 
-  if (captionJson && Object.values(captionJson)[0].id) {
+  if (false && captionJson && Object.values(captionJson)[0].id) {
     // temporarily, don't caption artworks
     // (because the images have the gallery hardcoded
     // and re-making them all is hard. Continue to use the
@@ -327,16 +327,22 @@ var transition =
 function fancyCaption() {
   var relativeImageName = image.src.match(/[^\/]+\.jpg$/)[0]
   var info = captionJson[relativeImageName]
-  if (info.id) return
-  var endDate = new Date(info.dateTo)
-  var month = 'Jan Feb Mar Apr May June July Aug Sep Oct Nov Dec'.split(' ')[
-    endDate.getMonth()
-  ]
-  var endsString = month + ' ' + endDate.getDate()
-  if (endDate.getFullYear() !== new Date().getFullYear())
-    endsString += ' ' + endDate.getFullYear()
+  if (info.id) {
+    // Caption an artwork image based on ID
+    text.innerHTML = `<h4>${info.location}</h4>`
+  } else if (info.dateTo) {
+    var endDate = new Date(info.dateTo)
+    var month = 'Jan Feb Mar Apr May June July Aug Sep Oct Nov Dec'.split(' ')[
+      endDate.getMonth()
+    ]
+    var endsString = month + ' ' + endDate.getDate()
+    if (endDate.getFullYear() !== new Date().getFullYear())
+      endsString += ' ' + endDate.getFullYear()
 
-  text.innerHTML = `<h1>${info.title}</h1> <h2>${info.location} | Closes ${endsString}</h2>`
+    text.innerHTML = `<h1>${info.title}</h1> <h2>${
+      info.location
+    } | Closes ${endsString}</h2>`
+  }
 }
 
 function reloadAtTime(intendedTime, callback) {

@@ -28,8 +28,8 @@ html:
 			caption=$$(cd $$screen; ls *.jpg | while read file; do \
 				objectId=$$(echo $$file | sed 's/.*:id-\(.*\).jpg/\1/'); \
 				curl --silent "https://search.artsmia.org/id/$$objectId" \
-				| jq --arg file "$$file" '{($$file): {id: .id, title: .title, location: (.room | sub("G"; "Gallery ")), width: .image_width, height: .image_height}}'; \
-			done | jq -c -s 'add'); \
+				| jq --arg file "$$file" '{($$file): {id: .id, location: (.room | sub("G"; "Gallery ")), width: .image_width, height: .image_height}}'; \
+			done | jq -c -s 'add' | tee caption.json); \
 		fi; \
 		sed "s/__NAME__/$$screen/; s/__IMAGES__/$$images/; s#__CAPTION__#$$caption#" \
 		< template/index.html \
@@ -97,3 +97,11 @@ splitImagesAcrossThreeScreens:
 				done; \
 		fi; \
 	done
+
+# $$designSharedFolder comes from outside environment. Set in `.envrc` or similar
+syncImagesFromDesign:
+	rsync -avz --delete "$$designSharedFolder"/Upper\ Lobby\ OLED\ Images/RotationsExhibitions/*.png UL-LEFT/
+	rsync -avz --delete "$$designSharedFolder"/Upper\ Lobby\ OLED\ Images/NewAccessionsArtworks/*.png UL-MIDDLE/
+	mogrify -format jpg UL-{LEFT,MIDDLE}/*.png
+	rm UL-MIDDLE/\:id-*.jpg
+	rename 's/\//\/:id-/g' UL-MIDDLE/*.jpg
