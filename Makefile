@@ -27,7 +27,8 @@ html:
 		if ls $$screen/*.jpg | grep ':id-' > /dev/null; then \
 			caption=$$(cd $$screen; ls *.jpg | while read file; do \
 				objectId=$$(echo $$file | sed 's/.*:id-\(.*\).jpg/\1/'); \
-				curl --silent "https://search.artsmia.org/id/$$objectId" \
+				cachedJson=__cache/$$objectId.json; \
+				([ -f $$cachedJson ] && cat $$cachedJson || curl --silent "https://search.artsmia.org/id/$$objectId" | tee $$cachedJson) \
 				| jq --arg file "$$file" '{($$file): {id: .id, location: (.room | sub("G"; "Gallery ")), width: .image_width, height: .image_height}}'; \
 			done | jq -c -s 'add' | tee caption.json); \
 		fi; \
