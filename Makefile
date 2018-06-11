@@ -106,3 +106,7 @@ syncImagesFromDesign:
 	mogrify -format jpg UL-{LEFT,MIDDLE}/*.png
 	rm UL-MIDDLE/\:id-*.jpg
 	rename 's/\//\/:id-/g' UL-MIDDLE/*.jpg
+	
+# TODO 
+# how to handle ordering of the artworks, where the file is only named by <id>?
+# run burn in prevention https://stackoverflow.com/questions/4741657/javascript-for-preventing-burn-in-problem-on-lcd-screen#4741944

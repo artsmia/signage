@@ -331,7 +331,7 @@ function fancyCaption() {
     // Caption an artwork image based on ID
     text.innerHTML = `<h4>${info.location}</h4>`
   } else if (info.dateTo) {
-    var endDate = new Date(info.dateTo)
+    var endDate = new Date(info.dateTo.replace(' ', 'T'))
     var month = 'Jan Feb Mar Apr May June July Aug Sep Oct Nov Dec'.split(' ')[
       endDate.getMonth()
     ]
