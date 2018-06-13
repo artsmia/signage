@@ -133,7 +133,10 @@ if (name == 'LOWER-LOBBY') {
   }
 }
 if (name == 'TARGET-ATRIUM') {
-  imageString = 'atrium-1.jpg atrium-2.jpg atrium-3.jpg atrium-4.jpg'
+  imageString = imageString
+    .replace(' family.jpg', '')
+    .replace(' third-thursday.jpg')
+    .replace('undefined', '')
 
   //if (showLeftOrRightImage !== '' && showLeftOrRightImage !== 'left') {
   var nextThirdThursday = nthDayOfMonth('Thursday', 3, date => {
