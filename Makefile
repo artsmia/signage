@@ -27,9 +27,10 @@ html:
 		if ls $$screen/*.jpg | grep ':id-' > /dev/null; then \
 			caption=$$(cd $$screen; ls *.jpg | while read file; do \
 				objectId=$$(echo $$file | sed 's/.*:id-\(.*\).jpg/\1/'); \
-				curl --silent "https://search.artsmia.org/id/$$objectId" \
-				| jq --arg file "$$file" '{($$file): {id: .id, title: .title, location: (.room | sub("G"; "Gallery ")), width: .image_width, height: .image_height}}'; \
-			done | jq -c -s 'add'); \
+				cachedJson=__cache/$$objectId.json; \
+				([ -f $$cachedJson ] && cat $$cachedJson || curl --silent "https://search.artsmia.org/id/$$objectId" | tee $$cachedJson) \
+				| jq --arg file "$$file" '{($$file): {id: .id, location: (.room | sub("G"; "Gallery ")), width: .image_width, height: .image_height}}'; \
+			done | jq -c -s 'add' | tee caption.json); \
 		fi; \
 		sed "s/__NAME__/$$screen/; s/__IMAGES__/$$images/; s#__CAPTION__#$$caption#" \
 		< template/index.html \
@@ -97,3 +98,15 @@ splitImagesAcrossThreeScreens:
 				done; \
 		fi; \
 	done
+
+# $$designSharedFolder comes from outside environment. Set in `.envrc` or similar
+syncImagesFromDesign:
+	rsync -avz --delete "$$designSharedFolder"/Upper\ Lobby\ OLED\ Images/RotationsExhibitions/*.png UL-LEFT/
+	rsync -avz --delete "$$designSharedFolder"/Upper\ Lobby\ OLED\ Images/NewAccessionsArtworks/*.png UL-MIDDLE/
+	mogrify -format jpg UL-{LEFT,MIDDLE}/*.png
+	rm UL-MIDDLE/\:id-*.jpg
+	rename 's/\//\/:id-/g' UL-MIDDLE/*.jpg
+	
+# TODO 
+# how to handle ordering of the artworks, where the file is only named by <id>?
+# run burn in prevention https://stackoverflow.com/questions/4741657/javascript-for-preventing-burn-in-problem-on-lcd-screen#4741944

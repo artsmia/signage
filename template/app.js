@@ -133,7 +133,10 @@ if (name == 'LOWER-LOBBY') {
   }
 }
 if (name == 'TARGET-ATRIUM') {
-  imageString = 'atrium-1.jpg atrium-2.jpg atrium-3.jpg atrium-4.jpg'
+  imageString = imageString
+    .replace(' family.jpg', '')
+    .replace(' third-thursday.jpg')
+    .replace('undefined', '')
 
   //if (showLeftOrRightImage !== '' && showLeftOrRightImage !== 'left') {
   var nextThirdThursday = nthDayOfMonth('Thursday', 3, date => {
@@ -276,7 +279,7 @@ if (caption !== '' && showLeftOrRightImage !== 'right') {
     text.innerHTML = caption
   }
 
-  if (captionJson && Object.values(captionJson)[0].id) {
+  if (false && captionJson && Object.values(captionJson)[0].id) {
     // temporarily, don't caption artworks
     // (because the images have the gallery hardcoded
     // and re-making them all is hard. Continue to use the
@@ -327,16 +330,22 @@ var transition =
 function fancyCaption() {
   var relativeImageName = image.src.match(/[^\/]+\.jpg$/)[0]
   var info = captionJson[relativeImageName]
-  if (info.id) return
-  var endDate = new Date(info.dateTo)
-  var month = 'Jan Feb Mar Apr May June July Aug Sep Oct Nov Dec'.split(' ')[
-    endDate.getMonth()
-  ]
-  var endsString = month + ' ' + endDate.getDate()
-  if (endDate.getFullYear() !== new Date().getFullYear())
-    endsString += ' ' + endDate.getFullYear()
+  if (info.id) {
+    // Caption an artwork image based on ID
+    text.innerHTML = `<h4>${info.location}</h4>`
+  } else if (info.dateTo) {
+    var endDate = new Date(info.dateTo.replace(' ', 'T'))
+    var month = 'Jan Feb Mar Apr May June July Aug Sep Oct Nov Dec'.split(' ')[
+      endDate.getMonth()
+    ]
+    var endsString = month + ' ' + endDate.getDate()
+    if (endDate.getFullYear() !== new Date().getFullYear())
+      endsString += ' ' + endDate.getFullYear()
 
-  text.innerHTML = `<h1>${info.title}</h1> <h2>${info.location} | Closes ${endsString}</h2>`
+    text.innerHTML = `<h1>${info.title}</h1> <h2>${
+      info.location
+    } | Closes ${endsString}</h2>`
+  }
 }
 
 function reloadAtTime(intendedTime, callback) {
