@@ -78,7 +78,7 @@ install:
 	which remark >/dev/null || echo 'npm install --global remark remark-html for markdown processing'
 
 watch:
-	rewatch template/index.html Makefile -c "make html"
+	rewatch template/* Makefile -c "make html"
 
 # We have a large folder of images at `$(images)`
 # Each of these images should be assigned to one of three screens
@@ -106,6 +106,12 @@ syncImagesFromDesign:
 	mogrify -format jpg UL-{LEFT,MIDDLE}/*.png
 	rm UL-MIDDLE/\:id-*.jpg
 	rename 's/\//\/:id-/g' UL-MIDDLE/*.jpg
+
+takeScreenshots:
+	ssh pi@$(address) "while true; do DISPLAY=:0 scrot; sleep 11; done"
+	rsync -avz pi@$(address):*_scrot.png screenshots
+	ssh pi@$(address) "rm *_scrot.png"
+	open screenshots/*
 	
 # TODO 
 # how to handle ordering of the artworks, where the file is only named by <id>?

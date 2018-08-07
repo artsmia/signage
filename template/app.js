@@ -8,11 +8,11 @@ var currentlyShowingEventImage = false
 // (this is also used on the single screen in the Target lobby)
 if (name == 'LOWER-LOBBY') {
   if (showLeftOrRightImage === 'left') {
-    imageString = 'LL-left-1.jpg LL-left-2.jpg LL-left-3.jpg LL-left-4.jpg'
+    imageString = imageString.split(" ").filter(img => img.match(/LL-left/)).join(" ")
   }
 
   if (showLeftOrRightImage !== 'left') {
-    imageString = 'LL-right-1.jpg LL-right-2.jpg LL-right-3.jpg LL-right-4.jpg'
+    imageString = imageString.split(" ").filter(img => img.match(/LL-right/)).join(" ")
     Array.from(document.querySelectorAll('.caption')).map(
       el => (el.style.visibility = 'hidden')
     )
@@ -135,7 +135,9 @@ if (name == 'LOWER-LOBBY') {
 if (name == 'TARGET-ATRIUM') {
   imageString = imageString
     .replace(' family.jpg', '')
+    .replace(/\s?family.jpg\s?/, '')
     .replace(' third-thursday.jpg')
+    .replace(/\s?third-thursday.jpg\s?/, '')
     .replace('undefined', '')
 
   //if (showLeftOrRightImage !== '' && showLeftOrRightImage !== 'left') {
