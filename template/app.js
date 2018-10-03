@@ -6,152 +6,15 @@ var currentlyShowingEventImage = false
 // on all LOWER-LOBBY screens
 // except the left of the two in the lower lobby screens
 // (this is also used on the single screen in the Target lobby)
-if (name == 'LOWER-LOBBY') {
-  if (showLeftOrRightImage === 'left') {
-    imageString = imageString.split(" ").filter(img => img.match(/LL-left/)).join(" ")
-  }
 
-  if (showLeftOrRightImage !== 'left') {
-    imageString = imageString.split(" ").filter(img => img.match(/LL-right/)).join(" ")
-    Array.from(document.querySelectorAll('.caption')).map(
-      el => (el.style.visibility = 'hidden')
-    )
-    var nextThirdThursday = nthDayOfMonth('Thursday', 3, date => {
-      date.setHours(17)
-      date.setMinutes(30)
-      return date
-    })
-    var nextFamilyDay = nthDayOfMonth('Sunday', 2)
-    var pdFair = nthDayOfMonth('Friday', 1, date => {
-      date.setHours(15)
-      date.setMinutes(00)
-      return date
-    })
-    // For debugging
-    // var nextToday = new Date().setHours(0, 0, 0, 0)
-    // var sponsoredDays = [nextFamilyDay, nextThirdThursday, nextToday]
-
-    // if it's between the start time of a sponsored event and 11pm that day,
-    // we want to show the sponsor screen
-    var sponsoredDays = [nextFamilyDay, nextThirdThursday]
-      .sort((d1, d2) => d1 >= d2)
-      .filter(d => d >= new Date().setHours(0, 0, 0, 0))
-
-    //var Event = []
-    //.sort((d1, d2) => d1 >= d2)
-    //.filter(d => d >= new Date().setHours(0, 0, 0, 0))
-
-    var timeToChange, timeToChangeBack
-
-    if (sponsoredDays.length > 0) {
-      timeToChange = sponsoredDays[0]
-      timeToChangeBack = (d1 = new Date(timeToChange)).setHours(23) // 11pm that day
-    }
-    if (Event.length > 0) {
-      timeToChangeEvent = Event[0]
-      timeToChangeEventBack = (d1 = new Date(timeToChangeEvent)).setHours(23) // 11pm that day
-    }
-
-    if (window.location.search.match('debug')) {
-      // `?debug` will change 5s after loading and change back 9s after that
-      timeToChange = Date.now() + 5000
-      timeToChangeBack = timeToChange + 9000
-    }
-    if (window.location.search.match('event')) {
-      // `?debug` will change 5s after loading and change back 9s after that
-      timeToChangeEvent = Date.now() + 5000
-      timeToChangeEventBack = timeToChangeEvent + 9000
-    }
-    var showEventImage = function() {
-      reloadAtTime(timeToChangeEvent, function() {
-        var day = new Date().getDay()
-        var imageFile = './PnD_Fair17_DigitalPrices_White.jpg'
-        console.info('showing PD Fair image for', day, imageFile)
-        image.src = imageFile
-        currentlyShowingEventImage = true
-        Array.from(document.querySelectorAll('.caption')).map(
-          el => (el.style.visibility = 'hidden')
-        )
-        reloadAtTime(timeToChangeEventBack, function() {
-          console.info('leaving sponsor image')
-          currentlyShowingEventImage = false
-          Array.from(document.querySelectorAll('.caption')).map(
-            el => (el.style.visibility = 'visible')
-          )
-          image.src = imageString.split(' ')[0]
-          setTimeout(window.location.reload, 1000) // reload to set up for the next sponsored event
-        })
-      })
-    }
-
-    var showSponsorImage = function() {
-      reloadAtTime(timeToChange, function() {
-        var day = new Date().getDay()
-        var imageFile = day === 4 ? './third-thursday.jpg' : './family.jpg'
-        console.info('showing sponsor image for', day, imageFile)
-        image.src = imageFile
-        currentlyShowingSponsorImage = true
-        Array.from(document.querySelectorAll('.caption')).map(
-          el => (el.style.visibility = 'hidden')
-        )
-        reloadAtTime(timeToChangeBack, function() {
-          console.info('leaving sponsor image')
-          currentlyShowingSponsorImage = false
-          Array.from(document.querySelectorAll('.caption')).map(
-            el => (el.style.visibility = 'visible')
-          )
-          image.src = imageString.split(' ')[0]
-          setTimeout(window.location.reload, 1000) // reload to set up for the next sponsored event
-        })
-      })
-    }
-
-    if (timeToChange) {
-      console.info(
-        'will show sponsor image at ',
-        new Date(timeToChange),
-        'and back to the regularly scheduled programming at',
-        new Date(timeToChangeBack),
-        '(right now, it is)',
-        new Date()
-      )
-
-      setTimeout(showSponsorImage, 0)
-    }
-    if (timeToChangeEvent) {
-      console.info(
-        'will show event image at ',
-        new Date(timeToChangeEvent),
-        'and back to the regularly scheduled programming at',
-        new Date(timeToChangeEventBack),
-        '(right now, it is)',
-        new Date()
-      )
-
-      setTimeout(showEventImage, 0)
-    }
-  }
-}
-if (name == 'TARGET-ATRIUM') {
-  imageString = imageString
-    .replace(' family.jpg', '')
-    .replace(/\s?family.jpg\s?/, '')
-    .replace(' third-thursday.jpg')
-    .replace(/\s?third-thursday.jpg\s?/, '')
-    .replace('undefined', '')
-
-  //if (showLeftOrRightImage !== '' && showLeftOrRightImage !== 'left') {
+if(name == 'LOWER-LOBBY' || name === 'TARGET-ATRIUM') {
   var nextThirdThursday = nthDayOfMonth('Thursday', 3, date => {
     date.setHours(17)
     date.setMinutes(30)
     return date
   })
   var nextFamilyDay = nthDayOfMonth('Sunday', 2)
-  var pdFair = nthDayOfMonth('Friday', 1, date => {
-    date.setHours(15)
-    date.setMinutes(00)
-    return date
-  })
+  //
   // For debugging
   // var nextToday = new Date().setHours(0, 0, 0, 0)
   // var sponsoredDays = [nextFamilyDay, nextThirdThursday, nextToday]
@@ -162,9 +25,18 @@ if (name == 'TARGET-ATRIUM') {
     .sort((d1, d2) => d1 >= d2)
     .filter(d => d >= new Date().setHours(0, 0, 0, 0))
 
-  //var Event = []
-  //.sort((d1, d2) => d1 >= d2)
-  //.filter(d => d >= new Date().setHours(0, 0, 0, 0))
+  var pdFair = nthDayOfMonth('Friday', 1, date => {
+    date.setHours(15)
+    date.setMinutes(00)
+    return date
+  })
+  var specialEvents = [
+    pdFair,
+    nthDayOfMonth('Saturday', 1),
+    nthDayOfMonth('Sunday', 1),
+  ]
+  .sort((d1, d2) => d1 >= d2)
+  .filter(d => d >= new Date().setHours(0, 0, 0, 0))
 
   var timeToChange, timeToChangeBack
 
@@ -172,9 +44,10 @@ if (name == 'TARGET-ATRIUM') {
     timeToChange = sponsoredDays[0]
     timeToChangeBack = (d1 = new Date(timeToChange)).setHours(23) // 11pm that day
   }
-  if (Event.length > 0) {
-    timeToChangeEvent = Event[0]
+  if (specialEvents.length > 0) {
+    timeToChangeEvent = specialEvents[0]
     timeToChangeEventBack = (d1 = new Date(timeToChangeEvent)).setHours(23) // 11pm that day
+    console.info('specialEvents!', {timeToChangeEvent, timeToChangeEventBack})
   }
 
   if (window.location.search.match('debug')) {
@@ -190,17 +63,17 @@ if (name == 'TARGET-ATRIUM') {
   var showEventImage = function() {
     reloadAtTime(timeToChangeEvent, function() {
       var day = new Date().getDay()
-      var imageFile = './PnD_Fair17_DigitalPrices_White.jpg'
-      console.info('showing PD Fair image for', day, imageFile)
+      var imageFile = day === 5 ? '../PrintDrawingFair_pricing_white.png' : '../PrintDrawingFair_SatSun_white.png'
+      console.info('showing Event image', {day, imageFile})
       image.src = imageFile
       currentlyShowingEventImage = true
-      Array.from(document.querySelectorAll('.caption')).map(
+      Array.from(document.querySelectorAll('.caption, .gradient-overlay')).map(
         el => (el.style.visibility = 'hidden')
       )
       reloadAtTime(timeToChangeEventBack, function() {
         console.info('leaving sponsor image')
         currentlyShowingEventImage = false
-        Array.from(document.querySelectorAll('.caption')).map(
+        Array.from(document.querySelectorAll('.caption, .gradient-overlay')).map(
           el => (el.style.visibility = 'visible')
         )
         image.src = imageString.split(' ')[0]
@@ -243,6 +116,7 @@ if (name == 'TARGET-ATRIUM') {
 
     setTimeout(showSponsorImage, 0)
   }
+
   if (timeToChangeEvent) {
     console.info(
       'will show event image at ',
@@ -255,8 +129,34 @@ if (name == 'TARGET-ATRIUM') {
 
     setTimeout(showEventImage, 0)
   }
-  //}
+
+  if (name == 'LOWER-LOBBY') {
+    if (showLeftOrRightImage === 'left') {
+      imageString = imageString.split(" ").filter(img => img.match(/LL-left/)).join(" ")
+    }
+
+    if (showLeftOrRightImage !== 'left') {
+      imageString = imageString.split(" ").filter(img => img.match(/LL-right/)).join(" ")
+      Array.from(document.querySelectorAll('.caption')).map(
+        el => (el.style.visibility = 'hidden')
+      )
+    }
+  } else if (name === 'TARGET-ATRIUM') {
+    // Remove the sponsor signage screens from the otherwise listed images
+    // that should show up - images for TT and family day only show on their
+    // special days
+    imageString = imageString
+      .replace(' family.jpg', '')
+      .replace(/\s?family.jpg\s?/, '')
+      .replace(' third-thursday.jpg')
+      .replace(/\s?third-thursday.jpg\s?/, '')
+      .replace('undefined', '')
+  }
 }
+
+// If a sign for some reason doesn't have an image, fall back to branding™
+if(!imageString || imageString === "") imageString = '../LOWER-LOBBY/LL-left-1.jpg'
+
 var images = imageString
   .split(' ')
   .map(function(img) {
