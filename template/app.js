@@ -68,15 +68,11 @@ if(name == 'LOWER-LOBBY' || name === 'TARGET-ATRIUM') {
       image.src = imageFile
       currentlyShowingEventImage = true
 
-      Array.from(document.querySelectorAll('.caption, .gradient-overlay')).map(
-        el => (el.style.visibility = 'hidden')
-      )
+      toggleCaption(false)
       reloadAtTime(timeToChangeEventBack, function() {
         console.info('leaving sponsor image')
         currentlyShowingEventImage = false
-        Array.from(document.querySelectorAll('.caption, .gradient-overlay')).map(
-          el => (el.style.visibility = 'visible')
-        )
+        toggleCaption(true)
         image.src = imageString.split(' ')[0]
         setTimeout(window.location.reload, 1000) // reload to set up for the next sponsored event
       })
@@ -90,15 +86,11 @@ if(name == 'LOWER-LOBBY' || name === 'TARGET-ATRIUM') {
       console.info('showing sponsor image for', day, imageFile)
       image.src = imageFile
       currentlyShowingSponsorImage = true
-      Array.from(document.querySelectorAll('.caption')).map(
-        el => (el.style.visibility = 'hidden')
-      )
+      toggleCaption(false)
       reloadAtTime(timeToChangeBack, function() {
         console.info('leaving sponsor image')
         currentlyShowingSponsorImage = false
-        Array.from(document.querySelectorAll('.caption')).map(
-          el => (el.style.visibility = 'visible')
-        )
+        toggleCaption(true)
         image.src = imageString.split(' ')[0]
         setTimeout(window.location.reload, 1000) // reload to set up for the next sponsored event
       })
@@ -156,9 +148,7 @@ if(name == 'LOWER-LOBBY' || name === 'TARGET-ATRIUM') {
       imageString = filteredRightImages || imageString
 
       // don't caption the left screen
-      Array.from(document.querySelectorAll('.caption')).map(
-        el => (el.style.visibility = 'hidden')
-      )
+      toggleCaption(false)
     }
   } else if (name === 'TARGET-ATRIUM') {
   }
@@ -202,6 +192,7 @@ if (caption !== '' && showLeftOrRightImage !== 'right') {
 
     document.body.appendChild(text)
     document.body.appendChild(gradient)
+    if(images[0].match(/noCaption/)) toggleCaption(false)
   }
 }
 
@@ -236,13 +227,9 @@ var transition =
 
       // Don't caption certain images - those with `noCaption` in the filename
       if(nextImage.match(/noCaption/)) {
-        Array.from(document.querySelectorAll('.caption, .gradient-overlay')).map(
-          el => (el.style.visibility = 'hidden')
-        )
+        toggleCaption(false)
       } else {
-        Array.from(document.querySelectorAll('.caption, .gradient-overlay')).map(
-          el => (el.style.visibility = 'visible')
-        )
+        toggleCaption(true)
       }
     }
   }, 11000)
@@ -326,4 +313,12 @@ function nthDayOfMonth(dayName, week, dateModificationCallback, monthPad = 0) {
   return dateModificationCallback
     ? dateModificationCallback(desiredDate)
     : desiredDate
+}
+
+function toggleCaption(show=true) {
+  let showOrHide = show ? 'visible' : 'hidden'
+
+  Array.from(document.querySelectorAll('.caption, .gradient-overlay')).map(
+    el => (el.style.visibility = showOrHide)
+  )
 }
