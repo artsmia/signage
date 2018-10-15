@@ -67,6 +67,7 @@ if(name == 'LOWER-LOBBY' || name === 'TARGET-ATRIUM') {
       console.info('showing Event image', {day, imageFile})
       image.src = imageFile
       currentlyShowingEventImage = true
+
       Array.from(document.querySelectorAll('.caption, .gradient-overlay')).map(
         el => (el.style.visibility = 'hidden')
       )
@@ -130,27 +131,36 @@ if(name == 'LOWER-LOBBY' || name === 'TARGET-ATRIUM') {
     setTimeout(showEventImage, 0)
   }
 
+  // Remove the sponsor signage screens from the otherwise listed images
+  // that should show up - images for TT and family day only show on their
+  // special days
+  imageString = imageString
+    .replace(' family.jpg', '')
+    .replace(/\s?family.jpg\s?/, '')
+    .replace(' third-thursday.jpg')
+    .replace(/\s?third-thursday.jpg\s?/, '')
+    .replace('\s?LL-left-1.jpg\s?', '')
+    .replace('undefined', '').trim()
+
+  imageString = imageString.replace(/\s?(family|third-thursday|LL-left-1).jpg/, '').trim()
+
   if (name == 'LOWER-LOBBY') {
+    // Balance images on the left and right screens
     if (showLeftOrRightImage === 'left') {
-      imageString = imageString.split(" ").filter(img => img.match(/LL-left/)).join(" ")
+      const filteredLeftImages = imageString.split(" ").filter(img => img.match(/LL-left/)).join(" ")
+      imageString = filteredLeftImages || imageString
     }
 
     if (showLeftOrRightImage !== 'left') {
-      imageString = imageString.split(" ").filter(img => img.match(/LL-right/)).join(" ")
+      const filteredRightImages = imageString.split(" ").filter(img => img.match(/LL-right/)).join(" ")
+      imageString = filteredRightImages || imageString
+
+      // don't caption the left screen
       Array.from(document.querySelectorAll('.caption')).map(
         el => (el.style.visibility = 'hidden')
       )
     }
   } else if (name === 'TARGET-ATRIUM') {
-    // Remove the sponsor signage screens from the otherwise listed images
-    // that should show up - images for TT and family day only show on their
-    // special days
-    imageString = imageString
-      .replace(' family.jpg', '')
-      .replace(/\s?family.jpg\s?/, '')
-      .replace(' third-thursday.jpg')
-      .replace(/\s?third-thursday.jpg\s?/, '')
-      .replace('undefined', '')
   }
 }
 
@@ -223,6 +233,17 @@ var transition =
       var nextImage = images[nextIndex]
       image.src = './' + nextImage
       if (captionJson) image.onload = fancyCaption
+
+      // Don't caption certain images - those with `noCaption` in the filename
+      if(nextImage.match(/noCaption/)) {
+        Array.from(document.querySelectorAll('.caption, .gradient-overlay')).map(
+          el => (el.style.visibility = 'hidden')
+        )
+      } else {
+        Array.from(document.querySelectorAll('.caption, .gradient-overlay')).map(
+          el => (el.style.visibility = 'visible')
+        )
+      }
     }
   }, 11000)
 
