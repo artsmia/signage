@@ -31,14 +31,14 @@ if(name == 'LOWER-LOBBY' || name === 'TARGET-ATRIUM') {
     return date
   })
   var specialEvents = [
-    pdFair,
-    nthDayOfMonth('Saturday', 1),
-    nthDayOfMonth('Sunday', 1),
+    new Date('2018-10-05T12:00:00.000Z'),
+    new Date('2018-10-06T12:00:00.000Z'),
+    new Date('2018-10-07T12:00:00.000Z')
   ]
   .sort((d1, d2) => d1 >= d2)
   .filter(d => d >= new Date().setHours(0, 0, 0, 0))
 
-  var timeToChange, timeToChangeBack
+  var timeToChange, timeToChangeBack, timeToChangeEvent, timeToChangeEventBack
 
   if (sponsoredDays.length > 0) {
     timeToChange = sponsoredDays[0]
@@ -117,7 +117,7 @@ if(name == 'LOWER-LOBBY' || name === 'TARGET-ATRIUM') {
     setTimeout(showSponsorImage, 0)
   }
 
-  if (timeToChangeEvent) {
+  if (timeToChangeEvent && showLeftOrRightImage !== 'right') {
     console.info(
       'will show event image at ',
       new Date(timeToChangeEvent),
@@ -155,7 +155,7 @@ if(name == 'LOWER-LOBBY' || name === 'TARGET-ATRIUM') {
 }
 
 // If a sign for some reason doesn't have an image, fall back to branding™
-if(!imageString || imageString === "") imageString = '../LOWER-LOBBY/LL-left-1.jpg'
+if(typeof imageString === 'undefined' || !imageString || imageString === "") imageString = '../LOWER-LOBBY/LL-left-1.jpg'
 
 var images = imageString
   .split(' ')
@@ -232,6 +232,7 @@ var transition =
 function fancyCaption() {
   var relativeImageName = image.src.match(/[^\/]+\.jpg$/)[0]
   var info = captionJson[relativeImageName]
+
   if (info.id) {
     // Caption an artwork image based on ID
     text.innerHTML = `<h4>${info.location}</h4>`
