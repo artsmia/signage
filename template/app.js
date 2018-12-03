@@ -10,7 +10,7 @@ var currentlyShowingEventImage = false
 if(name == 'LOWER-LOBBY' || name === 'TARGET-ATRIUM') {
   var nextThirdThursday = nthDayOfMonth('Thursday', 3, date => {
     date.setHours(17)
-    date.setMinutes(30)
+    date.setMinutes(0)
     return date
   })
   var nextFamilyDay = nthDayOfMonth('Sunday', 2)
@@ -97,7 +97,8 @@ if(name == 'LOWER-LOBBY' || name === 'TARGET-ATRIUM') {
     })
   }
 
-  if (timeToChange) {
+  // if (timeToChange) {
+  if (timeToChange && showLeftOrRightImage !== 'right') {
     console.info(
       'will show sponsor image at ',
       new Date(timeToChange),
