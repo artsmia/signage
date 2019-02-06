@@ -165,6 +165,12 @@ var images = imageString
   })
   .filter(img => !!img)
 
+var showIndexString = document.location.search.match(/\?(\d+)/) && document.location.search.match(/\?(\d+)/)[1]
+if(showIndexString && Number(showIndexString) !== NaN) {
+  var showIndex = Number(showIndexString)
+  images = images.slice(showIndex, showIndex+1)
+}
+
 var image = document.createElement('img')
 image.src = './' + images[0]
 
