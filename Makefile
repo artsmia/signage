@@ -16,6 +16,7 @@ html:
 		imageFiles=$$(ls -1v $$screen/ | grep '.jpg$$'); \
 		images=$$(echo $$imageFiles | tr '\n' ' ' | sed 's/\s+$$//'); \
 		[[ -f $$screen/index.md ]] && caption=$$(remark --use remark-html $$screen/index.md | tr -s '\n' ' '); \
+		mkdir -p $$screen/__cache; \
 		if ls $$screen/*.jpg | grep '_wp-' > /dev/null; then \
 			caption=$$(cd $$screen; ls *.jpg | while read file; do \
 				wpId=$$(echo $$file | sed 's/.*wp-\(.*\).jpg/\1/'); \
