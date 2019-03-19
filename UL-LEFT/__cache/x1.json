@@ -1,0 +1,12 @@
+{
+  "status": "publish",
+  "type": "exhibition",
+  "title": {
+    "rendered": "Nature in Monochrome: Birds and Flowers in Japanese Ink Painting"
+  },
+  "acf": {
+    "location": "Gallery 221, 222, 223",
+    "exh_date_from": "2018-03-10 00:00:00",
+    "exh_date_to": "2019-10-28 00:00:00"
+  }
+}
