@@ -22,7 +22,7 @@ if(name == 'LOWER-LOBBY' || name === 'TARGET-ATRIUM') {
   // if it's between the start time of a sponsored event and 11pm that day,
   // we want to show the sponsor screen
   var sponsoredDays = [nextFamilyDay, nextThirdThursday]
-    .sort((d1, d2) => d1 >= d2)
+    .sort((d1, d2) => d1 <= d2 ? -1 : 1)
     .filter(d => d >= new Date().setHours(0, 0, 0, 0))
 
   var pdFair = nthDayOfMonth('Friday', 1, date => {
@@ -172,7 +172,13 @@ if(showIndexString && Number(showIndexString) !== NaN) {
 }
 
 var image = document.createElement('img')
-image.src = './' + images[0]
+
+/* for LOWER-LOBBY, which has two screens showing the same sequence side-by-side, 
+ * offset the image shown by 1 so both screens don't always show the same thing.
+ */
+var jumpAheadToOffsetTwoScreens = name == 'LOWER-LOBBY' && showLeftOrRightImage === 'left' 
+var start = jumpAheadToOffsetTwoScreens ? 3 : 0
+image.src = './' + images[start]
 
 document.body.appendChild(image)
 
@@ -199,7 +205,7 @@ if (caption !== '' && showLeftOrRightImage !== 'right') {
 
     document.body.appendChild(text)
     document.body.appendChild(gradient)
-    if(images[0].match(/noCaption/)) toggleCaption(false)
+    if(images[start].match(/noCaption/)) toggleCaption(false)
   }
 }
 
