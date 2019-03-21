@@ -279,6 +279,20 @@ function reloadAtTime(intendedTime, callback) {
     return
   }
 
+  // if the screen will change within 12 hours, show an indicator
+  // on the screen
+  var timer = document.querySelector('#timer')
+  if (Date.now() > new Date(intendedTime - 60*60*1000*12)) {
+    timer.style.display = 'block'
+    // update timer icon to correspond to the time things actually change?
+    if(intendedTime.getHours() === 17) {
+      timer.innerHTML = '🕔' // <- 5 o'clock 
+    }
+  } else {
+    document.querySelector('#timer').style.display = 'none'
+    timer.innerHTML = '⏲' 
+  }
+
   // Otherwise, wait 60 seconds, or, if we're within 1 minute wait the amount
   // of seconds until the intended time
   // then re-call this function
