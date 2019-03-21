@@ -1,3 +1,7 @@
+/**
+ * @format
+ */
+
 var showSpecificImage = window.location.hash.replace('#', '')
 var showLeftOrRightImage = showSpecificImage !== '' && showSpecificImage
 var currentlyShowingSponsorImage = false
@@ -7,7 +11,7 @@ var currentlyShowingEventImage = false
 // except the left of the two in the lower lobby screens
 // (this is also used on the single screen in the Target lobby)
 
-if(name == 'LOWER-LOBBY' || name === 'TARGET-ATRIUM') {
+if (name == 'LOWER-LOBBY' || name === 'TARGET-ATRIUM') {
   var nextThirdThursday = nthDayOfMonth('Thursday', 3, date => {
     date.setHours(17)
     date.setMinutes(0)
@@ -22,7 +26,7 @@ if(name == 'LOWER-LOBBY' || name === 'TARGET-ATRIUM') {
   // if it's between the start time of a sponsored event and 11pm that day,
   // we want to show the sponsor screen
   var sponsoredDays = [nextFamilyDay, nextThirdThursday]
-    .sort((d1, d2) => d1 <= d2 ? -1 : 1)
+    .sort((d1, d2) => (d1 <= d2 ? -1 : 1))
     .filter(d => d >= new Date().setHours(0, 0, 0, 0))
 
   var pdFair = nthDayOfMonth('Friday', 1, date => {
@@ -33,10 +37,10 @@ if(name == 'LOWER-LOBBY' || name === 'TARGET-ATRIUM') {
   var specialEvents = [
     new Date('2018-10-05T12:00:00.000Z'),
     new Date('2018-10-06T12:00:00.000Z'),
-    new Date('2018-10-07T12:00:00.000Z')
+    new Date('2018-10-07T12:00:00.000Z'),
   ]
-  .sort((d1, d2) => d1 >= d2)
-  .filter(d => d >= new Date().setHours(0, 0, 0, 0))
+    .sort((d1, d2) => d1 >= d2)
+    .filter(d => d >= new Date().setHours(0, 0, 0, 0))
 
   var timeToChange, timeToChangeBack, timeToChangeEvent, timeToChangeEventBack
 
@@ -47,7 +51,7 @@ if(name == 'LOWER-LOBBY' || name === 'TARGET-ATRIUM') {
   if (specialEvents.length > 0) {
     timeToChangeEvent = specialEvents[0]
     timeToChangeEventBack = (d1 = new Date(timeToChangeEvent)).setHours(23) // 11pm that day
-    console.info('specialEvents!', {timeToChangeEvent, timeToChangeEventBack})
+    console.info('specialEvents!', { timeToChangeEvent, timeToChangeEventBack })
   }
 
   if (window.location.search.match('debug')) {
@@ -63,8 +67,11 @@ if(name == 'LOWER-LOBBY' || name === 'TARGET-ATRIUM') {
   var showEventImage = function() {
     reloadAtTime(timeToChangeEvent, function() {
       var day = new Date().getDay()
-      var imageFile = day === 5 ? '../PrintDrawingFair_pricing_white.png' : '../PrintDrawingFair_SatSun_white.png'
-      console.info('showing Event image', {day, imageFile})
+      var imageFile =
+        day === 5
+          ? '../PrintDrawingFair_pricing_white.png'
+          : '../PrintDrawingFair_SatSun_white.png'
+      console.info('showing Event image', { day, imageFile })
       image.src = imageFile
       currentlyShowingEventImage = true
 
@@ -132,20 +139,29 @@ if(name == 'LOWER-LOBBY' || name === 'TARGET-ATRIUM') {
     .replace(/\s?family.jpg\s?/, '')
     .replace(' third-thursday.jpg')
     .replace(/\s?third-thursday.jpg\s?/, '')
-    .replace('\s?LL-left-1.jpg\s?', '')
-    .replace('undefined', '').trim()
+    .replace('s?LL-left-1.jpgs?', '')
+    .replace('undefined', '')
+    .trim()
 
-  imageString = imageString.replace(/\s?(family|third-thursday|LL-left-1).jpg/, '').trim()
+  imageString = imageString
+    .replace(/\s?(family|third-thursday|LL-left-1).jpg/, '')
+    .trim()
 
   if (name == 'LOWER-LOBBY') {
     // Balance images on the left and right screens
     if (showLeftOrRightImage === 'left') {
-      const filteredLeftImages = imageString.split(" ").filter(img => img.match(/LL-left/)).join(" ")
+      const filteredLeftImages = imageString
+        .split(' ')
+        .filter(img => img.match(/LL-left/))
+        .join(' ')
       imageString = filteredLeftImages || imageString
     }
 
     if (showLeftOrRightImage !== 'left') {
-      const filteredRightImages = imageString.split(" ").filter(img => img.match(/LL-right/)).join(" ")
+      const filteredRightImages = imageString
+        .split(' ')
+        .filter(img => img.match(/LL-right/))
+        .join(' ')
       imageString = filteredRightImages || imageString
 
       // don't caption the left screen
@@ -156,7 +172,8 @@ if(name == 'LOWER-LOBBY' || name === 'TARGET-ATRIUM') {
 }
 
 // If a sign for some reason doesn't have an image, fall back to branding™
-if(typeof imageString === 'undefined' || !imageString || imageString === "") imageString = '../LOWER-LOBBY/LL-left-1.jpg'
+if (typeof imageString === 'undefined' || !imageString || imageString === '')
+  imageString = '../LOWER-LOBBY/LL-left-1.jpg'
 
 var images = imageString
   .split(' ')
@@ -165,18 +182,21 @@ var images = imageString
   })
   .filter(img => !!img)
 
-var showIndexString = document.location.search.match(/\?(\d+)/) && document.location.search.match(/\?(\d+)/)[1]
-if(showIndexString && Number(showIndexString) !== NaN) {
+var showIndexString =
+  document.location.search.match(/\?(\d+)/) &&
+  document.location.search.match(/\?(\d+)/)[1]
+if (showIndexString && Number(showIndexString) !== NaN) {
   var showIndex = Number(showIndexString)
-  images = images.slice(showIndex, showIndex+1)
+  images = images.slice(showIndex, showIndex + 1)
 }
 
 var image = document.createElement('img')
 
-/* for LOWER-LOBBY, which has two screens showing the same sequence side-by-side, 
+/* for LOWER-LOBBY, which has two screens showing the same sequence side-by-side,
  * offset the image shown by 1 so both screens don't always show the same thing.
  */
-var jumpAheadToOffsetTwoScreens = name == 'LOWER-LOBBY' && showLeftOrRightImage === 'left' 
+var jumpAheadToOffsetTwoScreens =
+  name == 'LOWER-LOBBY' && showLeftOrRightImage === 'left'
 var start = jumpAheadToOffsetTwoScreens ? 3 : 0
 image.src = './' + images[start]
 
@@ -205,7 +225,7 @@ if (caption !== '' && showLeftOrRightImage !== 'right') {
 
     document.body.appendChild(text)
     document.body.appendChild(gradient)
-    if(images[start].match(/noCaption/)) toggleCaption(false)
+    if (images[start].match(/noCaption/)) toggleCaption(false)
   }
 }
 
@@ -239,7 +259,7 @@ var transition =
       if (captionJson) image.onload = fancyCaption
 
       // Don't caption certain images - those with `noCaption` in the filename
-      if(nextImage.match(/noCaption/)) {
+      if (nextImage.match(/noCaption/)) {
         toggleCaption(false)
       } else {
         toggleCaption(true)
@@ -282,15 +302,15 @@ function reloadAtTime(intendedTime, callback) {
   // if the screen will change within 12 hours, show an indicator
   // on the screen
   var timer = document.querySelector('#timer')
-  if (Date.now() > new Date(intendedTime - 60*60*1000*12)) {
+  if (Date.now() > new Date(intendedTime - 60 * 60 * 1000 * 12)) {
     timer.style.display = 'block'
     // update timer icon to correspond to the time things actually change?
-    if(intendedTime.getHours() === 17) {
-      timer.innerHTML = '🕔' // <- 5 o'clock 
+    if (intendedTime.getHours() === 17) {
+      timer.innerHTML = '🕔' // <- 5 o'clock
     }
   } else {
     document.querySelector('#timer').style.display = 'none'
-    timer.innerHTML = '⏲' 
+    timer.innerHTML = '⏲'
   }
 
   // Otherwise, wait 60 seconds, or, if we're within 1 minute wait the amount
@@ -321,7 +341,7 @@ function nthDayOfMonth(dayName, week, dateModificationCallback, monthPad = 0) {
 
   var firstDesiredDate = new Date(
     day1.setDate(
-      (day1.getDate() + (desiredDayNumber - 1 - day1.getDay() + 7)) % 7 + 1
+      ((day1.getDate() + (desiredDayNumber - 1 - day1.getDay() + 7)) % 7) + 1
     )
   )
   var desiredDate = new Date(
@@ -342,7 +362,7 @@ function nthDayOfMonth(dayName, week, dateModificationCallback, monthPad = 0) {
     : desiredDate
 }
 
-function toggleCaption(show=true) {
+function toggleCaption(show = true) {
   let showOrHide = show ? 'visible' : 'hidden'
 
   Array.from(document.querySelectorAll('.caption, .gradient-overlay')).map(
