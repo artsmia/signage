@@ -305,7 +305,7 @@ function reloadAtTime(intendedTime, callback) {
   if (Date.now() > new Date(intendedTime - 60 * 60 * 1000 * 12)) {
     timer.style.display = 'block'
     // update timer icon to correspond to the time things actually change?
-    if (intendedTime.getHours() === 17) {
+    if (intendedTime && intendedTime.getHours() === 17) {
       timer.innerHTML = '🕔' // <- 5 o'clock
     }
   } else {
