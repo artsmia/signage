@@ -1,1 +1,1 @@
-../LOWER-LOBBY/index.md
+../exhibitions/HOOP/index.md
