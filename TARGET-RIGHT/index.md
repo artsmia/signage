@@ -1,1 +1,0 @@
-../exhibitions/HOOP/index.md
