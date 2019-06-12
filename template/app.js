@@ -21,11 +21,11 @@ if (name == 'LOWER-LOBBY' || name === 'TARGET-ATRIUM') {
   //
   // For debugging
   // var nextToday = new Date().setHours(0, 0, 0, 0)
-  // var sponsoredDays = [nextFamilyDay, nextThirdThursday, nextToday]
 
   // if it's between the start time of a sponsored event and 11pm that day,
   // we want to show the sponsor screen
   var sponsoredDays = [nextFamilyDay, nextThirdThursday]
+  // var sponsoredDays = [nextFamilyDay, nextThirdThursday, nextToday] // DEBUG, see above
     .sort((d1, d2) => (d1 <= d2 ? -1 : 1))
     .filter(d => d >= new Date().setHours(0, 0, 0, 0))
 
@@ -302,10 +302,11 @@ function reloadAtTime(intendedTime, callback) {
   // if the screen will change within 12 hours, show an indicator
   // on the screen
   var timer = document.querySelector('#timer')
-  if (Date.now() > new Date(intendedTime - 60 * 60 * 1000 * 12)) {
+  // but not if it's already changed to the sponsor image
+  if (Date.now() > new Date(intendedTime - 60 * 60 * 1000 * 12) && !currentlyShowingSponsorImage) {
     timer.style.display = 'block'
     // update timer icon to correspond to the time things actually change?
-    if (intendedTime && intendedTime.getHours() === 17) {
+    if (intendedTime && new Date(intendedTime).getHours() === 17) {
       timer.innerHTML = '🕔' // <- 5 o'clock
     }
   } else {
