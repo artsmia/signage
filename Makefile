@@ -47,6 +47,7 @@ html:
 
 deploy:
 	rsync -avz --delete --exclude=".git" . dx:/apps/cdn/brightsign/
+	ssh dx "chmod 755 /apps/cdn/brightsign/{LOWER-LOBBY,TARGET-ATRIUM,UL*}/*.jpg"
 
 writeAutoruns:
 	ls | grep UL- | while read screen; do \
