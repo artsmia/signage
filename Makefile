@@ -22,7 +22,7 @@ html:
 				wpId=$$(echo $$file | sed 's/.*wp-\(.*\).jpg/\1/'); \
 				cachedJson=__cache/$$wpId.json; \
 				([ -f $$cachedJson ] && cat $$cachedJson || curl --silent "https://staging.artsmia.org/wp-json/wp/v2/exhibition/$$wpId?_embed" | tee $$cachedJson) \
-				| jq --arg file "$$file" '{($$file): {title: .title.rendered, location: .acf.location, dateFrom: .acf.exh_date_from, dateTo: .acf.exh_date_to}}'; \
+				| jq --arg file "$$file" '{($$file): {title: .title.rendered, location: .acf.location, dateFrom: .acf.exh_date_from, dateTo: .acf.exh_date_to}}' | sed "s/&#8217;/'/"; \
 			done | jq -c -s 'add' | sed 's/&/\\\&/g'); \
 		fi; \
 		if ls $$screen/*.jpg | grep ':id-' > /dev/null; then \
