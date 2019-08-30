@@ -278,17 +278,27 @@ function fancyCaption() {
     // Caption an artwork image based on ID
     text.innerHTML = `<h4>${info.location}</h4>`
   } else if (info.dateTo) {
+
+    var startDate = new Date(info.dateFrom.replace(' ', 'T'))
     var endDate = new Date(info.dateTo.replace(' ', 'T'))
-    var month = 'Jan Feb Mar Apr May June July Aug Sep Oct Nov Dec'.split(' ')[
-      endDate.getMonth()
-    ]
-    var endsString = month + ' ' + endDate.getDate()
+    var months = 'Jan Feb Mar Apr May June July Aug Sep Oct Nov Dec'.split(' ')
+    var startMonth = months[startDate.getMonth()]
+    var endMonth = months[endDate.getMonth()]
+
+    // TODO de-dupe this
+    var startsString = startMonth + ' ' + startDate.getDate()
+    if (startDate.getFullYear() !== new Date().getFullYear())
+      startsString += ' ' + startDate.getFullYear()
+    var endsString = endMonth + ' ' + endDate.getDate()
     if (endDate.getFullYear() !== new Date().getFullYear())
       endsString += ' ' + endDate.getFullYear()
 
+    var isUpcoming = startDate > new Date()
+    const dateString = isUpcoming ? `${startsString} - ${endsString}` : `Closes ${endsString}`
+
     text.innerHTML = `<h1>${info.title}</h1> <h2>${
       info.location
-    } | Closes ${endsString}</h2>`
+    } | ${dateString}</h2>`
   }
 }
 
