@@ -197,8 +197,9 @@ var image = document.createElement('img')
  */
 var jumpAheadToOffsetTwoScreens =
   name == 'LOWER-LOBBY' && showLeftOrRightImage === 'left'
-var start = jumpAheadToOffsetTwoScreens ? 3 : 0
+var start = jumpAheadToOffsetTwoScreens ? 3%images.length : 0
 image.src = './' + images[start]
+console.info({jumpAheadToOffsetTwoScreens, start, src: image.src})
 
 document.body.appendChild(image)
 
