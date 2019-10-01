@@ -171,6 +171,12 @@ if (name == 'LOWER-LOBBY' || name === 'TARGET-ATRIUM') {
       // don't caption the left screen
       toggleCaption(false)
     }
+
+    var intermittentReloadInterval = 60*60*11 // 11 hours
+    console.info('will intermittently reload (only if online) in ', intermittentReloadInterval, 'seconds')
+    setInterval(function() {
+      if(navigator.onLine) window.location.reload()
+    }, intermittentReloadInterval)
   } else if (name === 'TARGET-ATRIUM') {
   }
 }
