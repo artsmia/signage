@@ -38,6 +38,10 @@ if (name == 'LOWER-LOBBY' || name === 'TARGET-ATRIUM') {
     new Date('2018-10-05T12:00:00.000Z'),
     new Date('2018-10-06T12:00:00.000Z'),
     new Date('2018-10-07T12:00:00.000Z'),
+    // 2019 dates
+    new Date('2019-10-04T12:00:00.000Z'),
+    new Date('2019-10-05T12:00:00.000Z'),
+    new Date('2019-10-06T12:00:00.000Z'),
   ]
     .sort((d1, d2) => d1 >= d2)
     .filter(d => d >= new Date().setHours(0, 0, 0, 0))
@@ -69,8 +73,8 @@ if (name == 'LOWER-LOBBY' || name === 'TARGET-ATRIUM') {
       var day = new Date().getDay()
       var imageFile =
         day === 5
-          ? '../PrintDrawingFair_pricing_white.png'
-          : '../PrintDrawingFair_SatSun_white.png'
+          ? '../exhibitions/pd-fair/PrintAndDrawingFair_LobbyScreenPricing_Friday.png'
+          : '../exhibitions/pd-fair/PrintAndDrawingFair_LobbyScreenPricing_SaturdaySunday.png'
       console.info('showing Event image', { day, imageFile })
       image.src = imageFile
       currentlyShowingEventImage = true
